@@ -1,0 +1,27 @@
+set dataf sep ','
+
+set term pngcairo size 25cm,20cm enhanced
+set out filename_image
+
+set view map
+set palette defined (0 "gray90", 1 "royalblue", 2 "midnight-blue")
+stats filename_data matrix nooutput
+set cbrange [1:STATS_max]
+
+unset key
+set tics scale 0
+unset border
+
+set title title
+set xlabel 'x'
+set ylabel 'y'
+
+set xrange [0:x_max]
+set yrange [0:y_max]
+
+set pm3d interpolate 4,4
+
+splot filename_data matrix u ((x_max-x_min)*$1/x_pts+x_min):\
+    ((y_max-y_min)*$2/y_pts+y_min):3 w pm3d
+
+set out

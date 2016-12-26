@@ -1,0 +1,46 @@
+set dataf sep ','
+
+set term pngcairo size 35cm,35cm enhanced
+set out filename_image
+
+set view map
+set palette defined (0 "green", 1 "blue", 2 "black", 3 "red", 4 "yellow")
+stats filename_data matrix nooutput
+set cbrange [-STATS_max:STATS_max]
+
+unset key
+set tics scale 0
+unset border
+set size ratio -1
+
+set title title
+set xlabel 'x'
+set ylabel 'y'
+
+set xrange [x_min:x_max]
+set yrange [y_min:y_max]
+
+set pm3d interpolate 4,4
+
+if (e2_x > 0. && ctr_x > 0.) {
+    x1 = ctr_x - e2_x / 2.
+    x2 = ctr_x + e2_x / 2.
+    set arrow from x1,y_min,0 to x1,y_max-y_step,0 lc rgb 'gray' nohead front
+    set arrow from x2,y_min,0 to x2,y_max-y_step,0 lc rgb 'gray' nohead front
+}
+
+if (e2_y > 0. && ctr_y > 0.) {
+    y1 = ctr_y - e2_y / 2.
+    y2 = ctr_y + e2_y / 2.
+    set arrow from x_min,y1,0 to x_max,y1,0 lc rgb 'gray' nohead front
+    set arrow from x_min,y2,0 to x_max,y2,0 lc rgb 'gray' nohead front
+}
+
+if (ctr_x > 0. && ctr_y > 0.) {
+    set label point pt 2 at ctr_x,ctr_y front
+}
+
+splot filename_data matrix u (x_step*$1 + x_min):\
+    (y_step*$2 + y_min):3 w pm3d
+
+set out
