@@ -4,10 +4,10 @@ import sys
 import copy
 import tqdm
 import numpy as np
-import mode_solver_lib as ms
-import analyse as anal
 import gnuplotpy as gp
-import structure_base as stb
+from . import _mode_solver_lib as ms
+from . import _analyse as anal
+from . import structure_base as stb
 
 class _ModeSolver(metaclass=abc.ABCMeta):
     def __init__(self, n_eigs, tol=0., boundary='0000',
