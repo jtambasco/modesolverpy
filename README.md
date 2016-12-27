@@ -82,10 +82,10 @@ The following example finds the first two modes of a waveguide with the followin
 	mode_solver.write_modes_to_file('example_modes_1.dat')
 
 #### Structure
-!<img src="./examples/example_structure_1.png " width="400">
+<img src="./examples/example_structure_1.png " width="400">
 
 ### Modes
-!<img src="./examples/example_modes_1_Ex_0.png " width="400">!<img src="./examples/example_modes_1_Ex_1.png " width="400">
+<img src="./examples/example_modes_1_Ex_0.png " width="400"> <img src="./examples/example_modes_1_Ex_1.png " width="400">
 
 ## Contributions
 If you add functionality, I'd be interested and would appreciate if you send me a pull request.
