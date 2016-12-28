@@ -44,3 +44,5 @@ splot filename_data matrix u (x_step*$1 + x_min):\
     (y_step*$2 + y_min):3 w pm3d
 
 set out
+
+system(sprintf('convert %s -trim -bordercolor white -border 20 %s', filename_image, filename_image))
