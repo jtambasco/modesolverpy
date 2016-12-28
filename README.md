@@ -15,14 +15,21 @@ There are three main ways to install `modesolverpy`.
 * Arch Linux: `yaourt -S python-modesolverpy`
 
 ### Dependencies
-If installing using the Arch Linux AUR package, dependencies will be automatically downloaded
+If installing using the [Arch Linux AUR package](https://aur.archlinux.org/packages/python-modesolverpy/), dependencies will be automatically downloaded
 and installed, if not, one should ensure the following dependencies are installed:
 
+#### Python
+
+* [setuptools](https://pypi.python.org/pypi/setuptools),
 * [numpy](http://www.numpy.org/),
 * [scipy](https://www.scipy.org/),
 * [tqdm](https://pypi.python.org/pypi/tqdm),
 * [gnuplotpy](https://github.com/jtambasco/gnuplotpy), and
-* [opticalmaterialspy](https://github.com/jtambasco/opticalmaterialspy).
+* [optional] [opticalmaterialspy](https://github.com/jtambasco/opticalmaterialspy).
+
+#### Other
+
+* [Gnuplot](http://www.gnuplot.info/)
 
 ## Features
 The main reasons to consider this library include:
