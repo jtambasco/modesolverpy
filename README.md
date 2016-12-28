@@ -1,11 +1,9 @@
 # modesolverpy
 Photonic mode solver with a simple interface.
 
-This finite difference mode solver is essentially a butchered version of [EMpy](https://github.com/lbolla/EMpy), with a simply interface
-to create typical waveguide structures.
+This finite difference mode solver is essentially a butchered version of [EMpy](https://github.com/lbolla/EMpy), with a simply interface to create typical waveguide structures.
 
-This was written to simplify the simulation of structures that I fabricate as part of my research, and
-I thought others may benefit from it too.
+This was written to simplify the simulation of structures that I fabricate as part of my research, and I thought others may benefit from it too.
 
 ## Installation
 There are three main ways to install `modesolverpy`.
