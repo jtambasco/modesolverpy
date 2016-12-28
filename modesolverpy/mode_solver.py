@@ -179,8 +179,8 @@ class ModeSolverSemiVectorial(_ModeSolver):
                     A, centre, sigma_2 = anal.fit_gaussian(self._structure.xc,
                                                            self._structure.yc,
                                                            mode.real)
-                    subtitle = ('E_{max} = %.3f, (x_{max}, y_{max}) = (%.3f, %.3f), FWMX_{x} = %.3f, '
-                                'FWMX_{y} = %.3f') % (A, centre[0], centre[1], sigma_2[0], sigma_2[1])
+                    subtitle = ('E_{max} = %.3f, (x_{max}, y_{max}) = (%.3f, %.3f), MFD_{x} = %.3f, '
+                                'MFD_{y} = %.3f') % (A, centre[0], centre[1], sigma_2[0], sigma_2[1])
                     self._plot_mode(self._semi_vectorial_method, i, filename_mode,
                                     self.n_effs[i], subtitle, sigma_2[0], sigma_2[1],
                                     centre[0], centre[1])
