@@ -7,6 +7,11 @@ setup(name='modesolverpy',
       author='Jean-Luc Tambasco',
       author_email='an.obscurity@gmail.com',
       license='MIT',
-      install_requires=['tqdm', 'scipy', 'numpy'],
+      install_requires=[
+          'tqdm',
+          'scipy',
+          'numpy',
+          'gnuplotpy'
+      ],
       packages=['modesolverpy'],
       zip_safe=False)
