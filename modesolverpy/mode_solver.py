@@ -98,6 +98,7 @@ class _ModeSolver(metaclass=abc.ABCMeta):
         args['filename_image'] = filename_image
 
         gp.gnuplot(self._path+'n_effs.gpi', args)
+        gp.trim_pad_image(filename_image)
 
         return args
 
@@ -133,6 +134,7 @@ class _ModeSolver(metaclass=abc.ABCMeta):
         args['filename_image'] = filename_image
 
         gp.gnuplot(self._path+'mode.gpi', args)
+        gp.trim_pad_image(filename_image)
 
         return args
 

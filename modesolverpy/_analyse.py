@@ -9,8 +9,8 @@ def fit_gaussian(x, y, z_2d, save_fits=False):
     z = z_2d
 
     max_idx = np.unravel_index(z.argmax(), z.shape)
-    max_row = max_idx[0]
-    max_col = max_idx[1]
+    max_row = max_idx[0] - 1
+    max_col = max_idx[1] - 1
 
     z_max_row = z[max_row, :]
     z_max_col = z[:, max_col]
