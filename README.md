@@ -10,9 +10,10 @@ It is recommend to install `modesolverpy` either via:
 
 ### Pip:
 ```bash
+pip3 install setuptools
 pip3 install git+https://github.com/jtambasco/gnuplotpy.git
-pip3 install git+https://github.com/jtambasco/opticalmaterialspy.git # optional
-pip3 install git+https://github.com/jtambasco/modesolverpy.git 
+pip3 install git+https://github.com/jtambasco/opticalmaterialspy.git
+pip3 install git+https://github.com/jtambasco/modesolverpy.git
 ```
 
 ### Arch Linux:
@@ -30,7 +31,7 @@ If installing using the [Arch Linux AUR package](https://aur.archlinux.org/packa
 * [scipy](https://www.scipy.org/),
 * [tqdm](https://pypi.python.org/pypi/tqdm),
 * [gnuplotpy](https://github.com/jtambasco/gnuplotpy), and
-* [optional] [opticalmaterialspy](https://github.com/jtambasco/opticalmaterialspy).
+* [opticalmaterialspy](https://github.com/jtambasco/opticalmaterialspy).
 
 #### Other
 
@@ -42,9 +43,8 @@ The main reasons to consider this library include:
 * semi-vectorial and fully vectorial options,
 * simple structure drawing,
 * automated data saving and plotting via Gnuplot,
-* some limited (at this stage) data processing (finding MFD of fundamental mode),
-* easily extensible library, and
-* works well with [opticalmaterialspy](https://github.com/jtambasco/opticalmaterialspy).
+* some limited (at this stage) data processing (finding MFD of fundamental mode), and
+* easily extensible library.
 
 ## Example
 
@@ -79,16 +79,16 @@ film_thickness = 0.5
 wavelength = 1.55
 
 structure = st.RidgeWaveguide(x_step,
-	                         y_step,
-	                         wg_height,
-	                         wg_width,
-	                         sub_height,
-	                         sub_width,
-	                         clad_height,
-	                         n_sub,
-	                         n_wg,
-	                         n_clad,
-	                         film_thickness)
+                              y_step,
+	                          wg_height,
+	                          wg_width,
+	                          sub_height,
+	                          sub_width,
+	                          clad_height,
+	                          n_sub,
+	                          n_wg,
+	                          n_clad,
+	                          film_thickness)
 structure.write_to_file('example_structure_1.dat')
 
 mode_solver = ms.ModeSolverSemiVectorial(2)
