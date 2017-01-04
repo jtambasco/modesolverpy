@@ -2,6 +2,16 @@ import copy
 from .structure_base import *
 import opticalmaterialspy as mat
 
+class Updateable:
+    def update(self, var, var_str, **kwargs):
+        kwargs.update(self._vars)
+        if var_str == 'step':
+            kwargs['x_step'] = var
+            kwargs['y_step'] = var
+        else:
+            kwargs[var_str] = var
+        WgArray.__init__(**kwargs)
+
 class RidgeWaveguide(Slabs):
     def __init__(self, x_step, y_step, wg_height, wg_width, sub_height, sub_width,
                  clad_height, n_sub, n_wg, n_clad=mat.Air().n(), film_thickness='wg_height'):
@@ -23,6 +33,7 @@ class RidgeWaveguide(Slabs):
 class WgArray(Slabs):
     def __init__(self, x_step, y_step, wg_height, wg_widths, wg_gaps, sub_height,
                  sub_width, clad_height, n_sub, n_wg, n_clad=mat.Air().n()):
+        self._vars = locals()
         Slabs.__init__(self, y_step, x_step, sub_width)
 
         try:
