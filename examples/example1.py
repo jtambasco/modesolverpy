@@ -1,11 +1,13 @@
 import modesolverpy.mode_solver as ms
 import modesolverpy.structure as st
+import numpy as np
 
 # All units are relative.  [um] were chosen in this case.
-x_step = 0.02
-y_step = 0.02
+x_step = 0.008
+y_step = 0.008
 wg_height = 0.4
 wg_width = 0.5
+wg_gaps = .5
 sub_height = 0.5
 sub_width = 2.
 clad_height = 0.5
@@ -15,6 +17,23 @@ n_clad = 1.
 film_thickness = 0.5
 wavelength = 1.55
 
+angle = 70
+angle = np.radians(angle)
+trap_len = 0
+
+# structure = st.WgArray(x_step,
+#                               y_step,
+#                               wg_height,
+#                               wg_width,
+#                               wg_gaps,
+#                               sub_height,
+#                               sub_width,
+#                               clad_height,
+#                               n_sub,
+#                               n_wg,
+#                               angle,
+#                               trap_len,
+#                               n_clad)
 structure = st.RidgeWaveguide(x_step,
                               y_step,
                               wg_height,
@@ -24,6 +43,8 @@ structure = st.RidgeWaveguide(x_step,
                               clad_height,
                               n_sub,
                               n_wg,
+                              angle,
+                              trap_len,
                               n_clad,
                               film_thickness)
 structure.write_to_file('example_structure_1.dat')
