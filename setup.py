@@ -14,4 +14,5 @@ setup(name='modesolverpy',
           'gnuplotpy'
       ],
       packages=['modesolverpy'],
+      include_package_data=True,
       zip_safe=False)
