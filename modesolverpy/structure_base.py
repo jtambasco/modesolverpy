@@ -89,297 +89,118 @@ class _AbstractStructure(metaclass=abc.ABCMeta):
         return interpolate.interp2d(self.x, self.y, self.n)
 
 
-    def _nxt_piece(self, x_mask, y_mask, n_material, x_mask_ref, y_mask_ref, left, num_y = 0):
-        """
-            To do:
-                Remove the x_ref and y_ref matrices, replace with num_y methodology
-                Replace @var: 'left' with a +-1 multiplier
+    def _nxt_piece(self, x_mask, y_mask, n_material, m, num_y = 0):
 
-            To Complete:
-                Determine number of x_steps to be undertaken.
-                Use to determine a num_y.
-
-                Each recursion:
-                    - set the next x_step to True
-                    - Set the next num_y y_mask valus to True
-
-                instead of boolean left - send +1 or -1. Then multiply the i.
-                eg:
-                    # print("HERE")
-                    # test = 8
-                    # plusminus = -1
-                    # print(y_max[-test])
-                    # print(y_max[(plusminus * test)])
-
-            Further refine:
-                Instead of the current code in _left and _right diagonals..
-                Could possibly just use something like...
-
-                LHS:
-                    while i < len(x_mask) and not x_done:
-                        if i * self.x_step > y_bot_left:
-                            x_done = True
-
-                        while i * self.x_step > self.y_bot_left - trap_len and i*self.x_step < self.y_bot_left and not x_done:
-                            x_mask[i] = True
-                            i += 1
-                        i += 1
-
-                RHS:
-                    while i < len(x_mask) and not x_done:
-                        if i * self.x_step > self.y_top_right + trap_len:
-                            x_done = True
-
-                            x_mask[i] = True
-                            while i * self.x_step > self.y_top_right and i * self.x_step < self.y_top_right + trap_len and not x_done:
-                            i += 1
-                        i += 1
-        """
-
-        found = False
         x_done = False
-        y_done = False
+        count = 0
+        for i in range(0, len(x_mask)):
+            if x_mask[i]:
+                j = i
+                count += 1
 
-        if left:
-            i = 0
-            while i < len(x_mask) and not found:
-                if x_mask[i]:
+        if count < 2:
+            x_mask[j] = False
+            x_done = True
+
+        for i in range(0,len(x_mask)):
+            if i < len(x_mask) + 1 and x_mask[m * i] and x_mask[m * (i + 1)]:
+                if x_mask[m * (i + 1)] and x_mask[m * (i + 1)]:
+                    x_mask[m * i] = False
+                    break
+
+        i = 1
+        g = 0
+        found = False
+        while i < len(y_mask) and not found:
+            if i < len(y_mask) - 1 and y_mask[-i] and not y_mask[-(i + 1)]:
+                while g + i < len(y_mask) and g < num_y + 1:
+                    y_mask[-(i + g)] = True
                     found = True
-                    x_mask[i] = False
-                i += 1
+                    g += 1
+            i += 1
 
-            count = 0
-            for i in range(0, len(x_mask)):
-                if x_mask[i]:
-                    j = i
-                    count += 1
-
-            if count < 2:
-                x_mask[j] = False
-                x_done = True
-
-            i = 1
-            g = 0
-            found = False
-            while i < len(y_mask) and not found:
-                if i < len(y_mask) - 1 and y_mask[-i] and not y_mask[-(i + 1)]:
-                    while g + i < len(y_mask) and g < num_y + 1:
-                        y_mask[-(i + g)] = True
-                        found = True
-                        g += 1
-                i += 1
-
-            if count > 1:
-                xy_mask = np.kron(y_mask, x_mask).reshape((y_mask.size, x_mask.size))
-                self.n[xy_mask] = n_material
-                self._nxt_piece(x_mask, y_mask, n_material, x_mask_ref, y_mask_ref, left, num_y)
-            else:
-                xy_mask = np.kron(y_mask, x_mask).reshape((y_mask.size, x_mask.size))
-                self.n[xy_mask] = n_material
-                return self.n
-
-        elif not left:
-            found = False
-            g = 0
-            i = 1
-
-            while i < len(y_mask) and not found:
-                if i < len(y_mask) - 1 and y_mask[-i] and not y_mask[-(i + 1)]:
-                    while g + i < len(y_mask) and g < num_y + 1:
-                        y_mask[-(i + g)] = True
-                        found = True
-                        g += 1
-                i += 1
-
-            count = 0
-            for i in range(0, len(x_mask)):
-                if x_mask[i]:
-                    j = i
-                    count += 1
-
-            if count < 2:
-                x_mask[j] = False
-                x_done = True
-
-            i = 1
-            for i in range(0,len(x_mask)):
-                if x_mask[-i] and x_mask_ref[-i]:
-                    if x_mask[-(i + 1)] and x_mask_ref[-(i + 1)]:
-                        x_mask[-i] = False
-                        break
-
+        if count > 1:
             xy_mask = np.kron(y_mask, x_mask).reshape((y_mask.size, x_mask.size))
             self.n[xy_mask] = n_material
+            self._nxt_piece(x_mask, y_mask, n_material, m, num_y)
+        else:
+            xy_mask = np.kron(y_mask, x_mask).reshape((y_mask.size, x_mask.size))
+            self.n[xy_mask] = n_material
+            return self.n
 
-            if not x_done:
-                self._nxt_piece(x_mask, y_mask, n_material, x_mask_ref, y_mask_ref, left, num_y)
-            else:
-                return self.n
+    def _right_diagonal(self, x_top_right, x_mask, y_mask, trap_len, n_material):
 
-    def _right_diagonal(self, x_bot_left, y_bot_left, x_top_right, y_top_right,
-                     n_material, trap_side = 0, trap_len = 0):
-
-        r_x_min = x_top_right
-
+        x_done = False
         iterations = trap_len/self.x_step
 
-        r_x_max = self.x + 1
-        ref_x = self.x
-
-        done = False
         i = 0
-        while i < len(r_x_max):
-            if r_x_max[i] - 1 < x_top_right + trap_len and r_x_max[i] - 1 > x_top_right and not done:
-                for g in range(0, int(iterations)):
-                    r_x_max[i] = (x_top_right + trap_len) - g * self.x_step + 0.01
-                    ref_x[i] = (x_top_right + trap_len) - g * self.x_step
+        g = 0
+        while i < len(x_mask) and not x_done:
+            if i * self.x_step > x_top_right + trap_len:
+                x_done = True
+
+            if i * self.x_step > x_top_right and i * self.x_step < x_top_right + trap_len and not x_done:
+                for g in range(0, int(iterations) + 1):
+                    x_mask[i] = True
                     i += 1
-                    done = True
-
-                if done:
-                    r_x_max[i] = x_top_right + trap_len
-                    ref_x[i] = x_top_right + trap_len - 0.0001
-                    break
+                    x_done = True
             i += 1
-
-        while done and i < len(r_x_max):
-            r_x_max[i] -= 1.1
-            i += 1
-
-        y_top_right = self.y
-
-        x_mask_ref = []
-        y_mask_ref = []
-
-        x_mask = np.logical_and(r_x_min<=ref_x, ref_x<=r_x_max)
-        y_mask = np.logical_and(y_bot_left<=self.y, self.y<=y_top_right)
-
-        for i in range(0, len(x_mask)):
-            x_mask_ref.append(x_mask[i])
-
-        for i in range(0, len(y_mask)):
-            y_mask[i] = False
-
-        y_mask[-1] = True
 
         num_x = 0
-        num_y = len(y_mask)
-
         for i in range(0, len(x_mask)):
             if x_mask[i]:
                 num_x += 1
 
+        num_y = len(y_mask)
         num_y_per_round = num_y / num_x
         num_y_per_round = int(num_y_per_round) + 1
-
-        xy_mask = np.kron(y_mask, x_mask).reshape((y_mask.size, x_mask.size))
-        self.n[xy_mask] = n_material
-
-        self._nxt_piece(x_mask, y_mask, n_material, x_mask_ref, y_mask_ref, False, num_y_per_round)
-
-        return self.n
-
-    def _left_diagonal(self, x_bot_left, y_bot_left, x_top_right, y_top_right,
-                     n_material, trap_side = 0, trap_len = 0):
-
-        l_x_max = x_bot_left
-        l_x_min = []
-
-        iterations = trap_len/self.x_step
-        diff = iterations - int(iterations)
-
-        trap_range = y_top_right - y_bot_left
-
-        y_max = []
-        y_max.append(self.y_min)
-
-        l_x_min = self.x + 1
-        new_y = []
-
-        done = False
-        i = 1
-        while not len(y_max) == len(self.y):
-            val = y_max[-1] + (trap_range / iterations)
-
-            while i < len(self.y) and val - self.y[i] > self.x_step and not len(self.y) == len(y_max) + 1:
-                y_max.append(self.y[i] - 0.0000001)
-                i += 1
-            if val > y_top_right:
-                y_max.append(y_top_right)
-            else:
-                y_max.append(val)
-                new_y.append(i)
-                i+=1
-
-        ref_x = self.x
-        done = False
-        i = 0
-
-        while i < len(l_x_min):
-            if l_x_min[i] - 1 > x_bot_left - trap_len and not done:
-                for g in range(0, int(iterations)):
-                    l_x_min[i] = (x_bot_left - trap_len) + g * self.x_step
-                    i += 1
-                    done = True
-
-                if done:
-                    l_x_min[i] = x_bot_left
-                    if l_x_max % self.x_step != 0:
-                        l_x_max += 0.01
-
-                    ref_x[i] = x_bot_left + 0.0001
-            i += 1
-
-        done = False
-        i = 0
-        while i < len(y_max) - 1:
-            if y_max[i] > self.y[i]:
-                while g < int(iterations) and not done:
-                    while y_max[i + 1] < self.y[i + 1]:
-                        y_max[i + 1] = self.y[i + 1] + 0.01
-                        i += 1
-                        done = True
-            i += 1
-
-        y_top_right = y_max
-
-        x_mask_ref = []
-        y_mask_ref = []
-
-        x_mask = np.logical_and(l_x_min<=ref_x, ref_x<=l_x_max)
-        y_mask = np.logical_and(y_bot_left<=self.y, self.y<=y_top_right)
-
-        for i in range(0, len(x_mask)):
-            x_mask_ref.append(x_mask[i])
-
-        for i in range(0, len(y_mask)):
-            y_mask_ref.append(y_mask[i])
-
-        # found = False
-        for i in range(0, len(y_mask)):
-            y_mask[i] = False
 
         y_mask[-1] = True
 
-        num_x = 0
-        num_y = len(y_mask)
-
-        for i in range(0, len(x_mask)):
-            if x_mask[i]:
-                num_x += 1
-
-        num_y_per_round = num_y / num_x
-        num_y_per_round = int(num_y_per_round) + 1
-
         xy_mask = np.kron(y_mask, x_mask).reshape((y_mask.size, x_mask.size))
         self.n[xy_mask] = n_material
 
-        self._nxt_piece(x_mask, y_mask, n_material, x_mask_ref, y_mask_ref, True, num_y_per_round)
+        self._nxt_piece(x_mask, y_mask, n_material, -1, num_y_per_round)
 
         return self.n
+
+    def _left_diagonal(self, x_bot_left, x_mask, y_mask, trap_len, n_material):
+
+         iterations = trap_len/self.x_step
+         x_done = False
+
+         i = 0
+         g = 0
+         while i < len(x_mask) and not x_done:
+             if i * self.x_step > x_bot_left:
+                 x_done = True
+
+             if i * self.x_step > x_bot_left - trap_len and i*self.x_step < x_bot_left and not x_done:
+                 for g in range(0, int(iterations) + 1):
+                     x_mask[i] = True
+                     i += 1
+                     x_done = True
+             i += 1
+
+         num_x = 0
+         for i in range(0, len(x_mask)):
+             if x_mask[i]:
+                 num_x += 1
+
+         num_y = len(y_mask)
+         num_y_per_round = num_y / num_x
+         num_y_per_round = int(num_y_per_round) + 1
+
+         y_mask[-1] = True
+
+         xy_mask = np.kron(y_mask, x_mask).reshape((y_mask.size, x_mask.size))
+         self.n[xy_mask] = n_material
+
+         self._nxt_piece(x_mask, y_mask, n_material, 1, num_y_per_round)
+         return self.n
 
     def add_material(self, x_bot_left, y_bot_left, x_top_right, y_top_right,
-                     n_material, trap_side = 0, trap_len = 0):
+                     n_material, trap_len = 0):
 
         x_mask = np.logical_and(x_bot_left<=self.x, self.x<=x_top_right)
         y_mask = np.logical_and(y_bot_left<=self.y, self.y<=y_top_right)
@@ -388,14 +209,21 @@ class _AbstractStructure(metaclass=abc.ABCMeta):
         self.n[xy_mask] = n_material
 
         if trap_len:
-            self._left_diagonal(x_bot_left, y_bot_left, x_top_right, y_top_right,
-                         n_material, trap_side, trap_len)
-            self._right_diagonal(x_bot_left, y_bot_left, x_top_right, y_top_right,
-                        n_material, trap_side, trap_len)
+            for i in range(0, len(x_mask)):
+                x_mask[i] = False
+            for i in range(0, len(y_mask)):
+                y_mask[i] = False
+
+            self._left_diagonal(x_bot_left, x_mask, y_mask, trap_len, n_material)
+
+            for i in range(0, len(x_mask)):
+                x_mask[i] = False
+            for i in range(0, len(y_mask)):
+                y_mask[i] = False
+
+            self._right_diagonal(x_top_right, x_mask, y_mask, trap_len, n_material)
 
         return self.n
-
-
 
     def write_to_file(self, filename='material_index.dat', plot=True):
         path = os.path.dirname(sys.modules[__name__].__file__) + '/'
@@ -494,6 +322,6 @@ class Slab(Structure):
         self.position = Slab.position
         Slab.position += 1
 
-    def add_material(self, x_min, x_max, n, trap_side, trap_len):
-        Structure.add_material(self, x_min, self.y_min, x_max, self.y_max, n, trap_side, trap_len)
+    def add_material(self, x_min, x_max, n, trap_len = 0):
+        Structure.add_material(self, x_min, self.y_min, x_max, self.y_max, n, trap_len)
         return self.n
