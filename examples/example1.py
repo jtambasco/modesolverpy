@@ -3,6 +3,7 @@ import modesolverpy.structure as st
 import numpy as np
 
 # All units are relative.  [um] were chosen in this case.
+
 x_step = 0.008
 y_step = 0.008
 wg_height = 0.4
@@ -17,36 +18,41 @@ n_clad = 1.
 film_thickness = 0.5
 wavelength = 1.55
 
-angle = 70
-angle = np.radians(angle)
-trap_len = 0
+wg_gaps = 0.5
+wg_widths = [0.5, 0.5]
+side_base_length = 0
+angle = np.radians(80)
 
-# structure = st.WgArray(x_step,
+# Simple uncomment the desired structure.
+# structure = st.RidgeWaveguide(x_step,
 #                               y_step,
 #                               wg_height,
 #                               wg_width,
-#                               wg_gaps,
 #                               sub_height,
 #                               sub_width,
 #                               clad_height,
 #                               n_sub,
 #                               n_wg,
 #                               angle,
-#                               trap_len,
-#                               n_clad)
-structure = st.RidgeWaveguide(x_step,
-                              y_step,
-                              wg_height,
-                              wg_width,
-                              sub_height,
-                              sub_width,
-                              clad_height,
-                              n_sub,
-                              n_wg,
-                              angle,
-                              trap_len,
-                              n_clad,
-                              film_thickness)
+#                               side_base_length,
+#                               n_clad,
+#                               film_thickness)
+
+structure = st.WgArray(x_step,
+                        y_step,
+                        wg_height,
+                        wg_widths,
+                        wg_gaps,
+                        sub_height,
+                        sub_width,
+                        clad_height,
+                        n_sub,
+                        n_wg,
+                        angle,
+                        side_base_length,
+                        n_clad)
+
+
 structure.write_to_file('example_structure_1.dat')
 
 mode_solver = ms.ModeSolverSemiVectorial(2)
