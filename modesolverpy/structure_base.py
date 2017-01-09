@@ -166,38 +166,38 @@ class _AbstractStructure(metaclass=abc.ABCMeta):
 
     def _left_diagonal(self, x_bot_left, x_mask, y_mask, trap_len, n_material):
 
-         iterations = trap_len/self.x_step
-         x_done = False
+        x_done = False
+        iterations = trap_len/self.x_step
 
-         i = 0
-         g = 0
-         while i < len(x_mask) and not x_done:
-             if i * self.x_step > x_bot_left:
-                 x_done = True
+        i = 0
+        g = 0
+        while i < len(x_mask) and not x_done:
+            if i * self.x_step > x_bot_left:
+                x_done = True
 
-             if i * self.x_step > x_bot_left - trap_len and i*self.x_step < x_bot_left and not x_done:
-                 for g in range(0, int(iterations) + 1):
-                     x_mask[i] = True
-                     i += 1
-                     x_done = True
-             i += 1
+            if i * self.x_step > x_bot_left - trap_len and i*self.x_step < x_bot_left and not x_done:
+                for g in range(0, int(iterations) + 1):
+                    x_mask[i] = True
+                    i += 1
+                    x_done = True
+            i += 1
 
-         num_x = 0
-         for i in range(0, len(x_mask)):
-             if x_mask[i]:
-                 num_x += 1
+        num_x = 0
+        for i in range(0, len(x_mask)):
+            if x_mask[i]:
+                num_x += 1
 
-         num_y = len(y_mask)
-         num_y_per_round = num_y / num_x
-         num_y_per_round = int(num_y_per_round) + 1
+        num_y = len(y_mask)
+        num_y_per_round = num_y / num_x
+        num_y_per_round = int(num_y_per_round) + 1
 
-         y_mask[-1] = True
+        y_mask[-1] = True
 
-         xy_mask = np.kron(y_mask, x_mask).reshape((y_mask.size, x_mask.size))
-         self.n[xy_mask] = n_material
+        xy_mask = np.kron(y_mask, x_mask).reshape((y_mask.size, x_mask.size))
+        self.n[xy_mask] = n_material
 
-         self._nxt_piece(x_mask, y_mask, n_material, 1, num_y_per_round)
-         return self.n
+        self._nxt_piece(x_mask, y_mask, n_material, 1, num_y_per_round)
+        return self.n
 
     def add_material(self, x_bot_left, y_bot_left, x_top_right, y_top_right,
                      n_material, trap_len = 0):

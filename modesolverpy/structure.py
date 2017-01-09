@@ -14,7 +14,7 @@ class Updateable:
 
 class RidgeWaveguide(Slabs, Updateable):
     def __init__(self, x_step, y_step, wg_height, wg_width, sub_height, sub_width,
-                 clad_height, n_sub, n_wg, angle = 0, trap_len = 0, n_clad=1., film_thickness='wg_height'):
+                 clad_height, n_sub, n_wg, angle = 0, trap_len = 0, n_clad=mat.Air().n(), film_thickness='wg_height'):
         Slabs.__init__(self, y_step, x_step, sub_width)
 
         self.n_sub = n_sub
@@ -37,7 +37,7 @@ class RidgeWaveguide(Slabs, Updateable):
 
 class WgArray(Slabs, Updateable):
     def __init__(self, x_step, y_step, wg_height, wg_widths, wg_gaps, sub_height,
-                 sub_width, clad_height, n_sub, n_wg, angle = 0, trap_len = 0, n_clad=1.):
+                 sub_width, clad_height, n_sub, n_wg, angle = 0, trap_len = 0, n_clad=mat.Air().n()):
 
         self._vars = locals()
 
