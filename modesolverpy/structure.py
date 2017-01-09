@@ -58,7 +58,7 @@ class WgArray(Slabs, Updateable):
 
         self.add_slab(sub_height, n_sub)
 
-        if angle:
+        if angle and not trap_len:
             trap_len = get_trap_length(angle, wg_height)
 
         k = self.add_slab(wg_height, n_clad)

@@ -18,10 +18,11 @@ n_clad = 1.
 film_thickness = 0.5
 wavelength = 1.55
 
-wg_gaps = 0.5
 wg_widths = [0.5, 0.5]
 side_base_length = 0
 angle = np.radians(80)
+
+assert not (angle and side_base_length), "Please enter either an angle, or the length of each triangular side of the waveguide."
 
 # Simple uncomment the desired structure.
 # structure = st.RidgeWaveguide(x_step,
