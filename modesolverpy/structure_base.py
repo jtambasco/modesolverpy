@@ -88,30 +88,24 @@ class _AbstractStructure(metaclass=abc.ABCMeta):
     def n_func(self):
         return interpolate.interp2d(self.x, self.y, self.n)
 
-    def _add_triangular_sides(self, xy_mask, num_iterations, x_start_index, x_stop_index, n_material, lhs):
-        if not lhs:
-            x_stop_ref = x_stop_index
-            x_stop_index = x_start_index
+    def _add_triangular_sides(self, xy_mask, trap_len, y_top_right, y_bot_left, x_top_right, x_bot_left, n_material):
 
-        i = 0
-        while i < len(xy_mask):
-            g = 0
-            if lhs:
-                while i + g < len(xy_mask) and g < num_iterations:
-                    xy_mask[(i + g)][0:x_start_index] = False
-                    xy_mask[(i + g)][x_start_index:x_stop_index] = True
-                    g += 1
-                x_start_index -= 1
-                i += num_iterations
-            else:
-                while i + g < len(xy_mask) and g < num_iterations:
-                    xy_mask[(i + g)][x_stop_index:x_stop_ref] = False
-                    xy_mask[(i + g)][x_start_index:x_stop_index] = True
-                    g += 1
-                x_stop_index += 1
-                i += num_iterations
+        num_x_iterations = round(trap_len/self.x_step)
+        y_per_iteration = round(self.y_pts / num_x_iterations)
+
+        lhs_x_start_index = round(x_bot_left/ self.x_step)
+        rhs_x_stop_index = round((x_top_right + trap_len)/ self.x_step) + 1
+
+        for i, _ in enumerate(xy_mask):
+            xy_mask[(i)][0:lhs_x_start_index] = False
+            xy_mask[(i)][lhs_x_start_index:rhs_x_stop_index] = True
+
+            if i % y_per_iteration == 0:
+                lhs_x_start_index -= 1
+                rhs_x_stop_index += 1
 
         self.n[xy_mask] = n_material
+        return self.n
 
     def add_material(self, x_bot_left, y_bot_left, x_top_right, y_top_right,
                      n_material, trap_len = 0):
@@ -123,21 +117,8 @@ class _AbstractStructure(metaclass=abc.ABCMeta):
         self.n[xy_mask] = n_material
 
         if trap_len:
-            num_x_iterations = round(trap_len/self.x_step)
-            num_y_iterations = round((y_top_right - y_bot_left)/self.y_step)
+            self._add_triangular_sides(xy_mask,trap_len, y_top_right, y_bot_left, x_top_right, x_bot_left, n_material)
 
-            y_per_iteration = round(num_y_iterations / num_x_iterations)
-            # print('y_per_iteration', y_per_iteration)
-
-            # LHS
-            x_stop_index = round(x_bot_left/ self.x_step)
-            x_start_index = x_stop_index
-            self._add_triangular_sides(xy_mask, y_per_iteration, x_start_index, x_stop_index, n_material, True)
-
-            # RHS:
-            x_start_index = round(((x_top_right)/self.x_step)) + 1
-            x_stop_index = round((x_top_right + trap_len)/ self.x_step) + 1
-            self._add_triangular_sides(xy_mask, y_per_iteration, x_start_index, x_stop_index, n_material, False)
         return self.n
 
     def write_to_file(self, filename='material_index.dat', plot=True):
