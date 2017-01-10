@@ -88,12 +88,141 @@ class _AbstractStructure(metaclass=abc.ABCMeta):
     def n_func(self):
         return interpolate.interp2d(self.x, self.y, self.n)
 
-    def add_material(self, x_bot_left, y_bot_left, x_top_right, y_top_right,
-                     n_material):
-        x_mask = np.logical_and(x_bot_left<=self.x, self.x<=x_top_right)
-        y_mask = np.logical_and(y_bot_left<=self.y, self.y<=y_top_right)
+
+    def _nxt_piece(self, x_mask, y_mask, n_material, m, num_y = 0):
+
+        x_done = False
+        count = 0
+        for i in range(0, len(x_mask)):
+            if x_mask[i]:
+                j = i
+                count += 1
+
+        if count < 2:
+            x_mask[j] = False
+            x_done = True
+
+        for i in range(0,len(x_mask)):
+            if i < len(x_mask) + 1 and x_mask[m * i] and x_mask[m * (i + 1)]:
+                if x_mask[m * (i + 1)] and x_mask[m * (i + 1)]:
+                    x_mask[m * i] = False
+                    break
+
+        i = 1
+        g = 0
+        found = False
+        while i < len(y_mask) and not found:
+            if i < len(y_mask) - 1 and y_mask[-i] and not y_mask[-(i + 1)]:
+                while g + i < len(y_mask) and g < num_y + 1:
+                    y_mask[-(i + g)] = True
+                    found = True
+                    g += 1
+            i += 1
+
+        if count > 1:
+            xy_mask = np.kron(y_mask, x_mask).reshape((y_mask.size, x_mask.size))
+            self.n[xy_mask] = n_material
+            self._nxt_piece(x_mask, y_mask, n_material, m, num_y)
+        else:
+            xy_mask = np.kron(y_mask, x_mask).reshape((y_mask.size, x_mask.size))
+            self.n[xy_mask] = n_material
+            return self.n
+
+    def _right_diagonal(self, x_top_right, x_mask, y_mask, trap_len, n_material):
+
+        x_done = False
+        iterations = trap_len/self.x_step
+
+        i = 0
+        g = 0
+        while i < len(x_mask) and not x_done:
+            if i * self.x_step > x_top_right + trap_len:
+                x_done = True
+
+            if i * self.x_step > x_top_right and i * self.x_step < x_top_right + trap_len and not x_done:
+                for g in range(0, int(iterations) + 1):
+                    x_mask[i] = True
+                    i += 1
+                    x_done = True
+            i += 1
+
+        num_x = 0
+        for i in range(0, len(x_mask)):
+            if x_mask[i]:
+                num_x += 1
+
+        num_y = len(y_mask)
+        num_y_per_round = num_y / num_x
+        num_y_per_round = int(num_y_per_round) + 1
+
+        y_mask[-1] = True
+
         xy_mask = np.kron(y_mask, x_mask).reshape((y_mask.size, x_mask.size))
         self.n[xy_mask] = n_material
+
+        self._nxt_piece(x_mask, y_mask, n_material, -1, num_y_per_round)
+
+        return self.n
+
+    def _left_diagonal(self, x_bot_left, x_mask, y_mask, trap_len, n_material):
+
+        x_done = False
+        iterations = trap_len/self.x_step
+
+        i = 0
+        g = 0
+        while i < len(x_mask) and not x_done:
+            if i * self.x_step > x_bot_left:
+                x_done = True
+
+            if i * self.x_step > x_bot_left - trap_len and i*self.x_step < x_bot_left and not x_done:
+                for g in range(0, int(iterations) + 1):
+                    x_mask[i] = True
+                    i += 1
+                    x_done = True
+            i += 1
+
+        num_x = 0
+        for i in range(0, len(x_mask)):
+            if x_mask[i]:
+                num_x += 1
+
+        num_y = len(y_mask)
+        num_y_per_round = num_y / num_x
+        num_y_per_round = int(num_y_per_round) + 1
+
+        y_mask[-1] = True
+
+        xy_mask = np.kron(y_mask, x_mask).reshape((y_mask.size, x_mask.size))
+        self.n[xy_mask] = n_material
+
+        self._nxt_piece(x_mask, y_mask, n_material, 1, num_y_per_round)
+        return self.n
+
+    def add_material(self, x_bot_left, y_bot_left, x_top_right, y_top_right,
+                     n_material, trap_len = 0):
+
+        x_mask = np.logical_and(x_bot_left<=self.x, self.x<=x_top_right)
+        y_mask = np.logical_and(y_bot_left<=self.y, self.y<=y_top_right)
+
+        xy_mask = np.kron(y_mask, x_mask).reshape((y_mask.size, x_mask.size))
+        self.n[xy_mask] = n_material
+
+        if trap_len:
+            for i in range(0, len(x_mask)):
+                x_mask[i] = False
+            for i in range(0, len(y_mask)):
+                y_mask[i] = False
+
+            self._left_diagonal(x_bot_left, x_mask, y_mask, trap_len, n_material)
+
+            for i in range(0, len(x_mask)):
+                x_mask[i] = False
+            for i in range(0, len(y_mask)):
+                y_mask[i] = False
+
+            self._right_diagonal(x_top_right, x_mask, y_mask, trap_len, n_material)
+
         return self.n
 
     def write_to_file(self, filename='material_index.dat', plot=True):
@@ -193,6 +322,6 @@ class Slab(Structure):
         self.position = Slab.position
         Slab.position += 1
 
-    def add_material(self, x_min, x_max, n):
-        Structure.add_material(self, x_min, self.y_min, x_max, self.y_max, n)
+    def add_material(self, x_min, x_max, n, trap_len = 0):
+        Structure.add_material(self, x_min, self.y_min, x_max, self.y_max, n, trap_len)
         return self.n
