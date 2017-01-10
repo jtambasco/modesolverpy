@@ -94,7 +94,7 @@ class _AbstractStructure(metaclass=abc.ABCMeta):
         y_per_iteration = round(self.y_pts / num_x_iterations)
 
         lhs_x_start_index = round(x_bot_left/ self.x_step)
-        rhs_x_stop_index = round((x_top_right + trap_len)/ self.x_step) + 1
+        rhs_x_stop_index = round((x_top_right)/ self.x_step) + 1
 
         for i, _ in enumerate(xy_mask):
             xy_mask[(i)][0:lhs_x_start_index] = False
