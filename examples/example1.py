@@ -24,7 +24,7 @@ angle = np.radians(80)
 
 assert not (angle and side_base_length), "Please enter either an angle, or the length of each triangular side of the waveguide."
 
-# Simple uncomment the desired structure.
+# Simply uncomment the desired structure.
 # structure = st.RidgeWaveguide(x_step,
 #                               y_step,
 #                               wg_height,
