@@ -10,7 +10,12 @@ class Updateable:
             kwargs['y_step'] = var
         else:
             kwargs[var_str] = var
-        WgArray.__init__(**kwargs)
+
+
+        if str(self.__class__.__name__) == 'RidgeWaveguide':
+            RidgeWaveguide.__init__(**kwargs)
+        else:
+            WgArray.__init__(**kwargs)
 
 class RidgeWaveguide(Slabs, Updateable):
     def __init__(self, x_step, y_step, wg_height, wg_width, sub_height, sub_width,
