@@ -62,6 +62,9 @@ class WgArray(Slabs, Updateable):
         wg_gaps_pad.append(0.)
 
         self.add_slab(sub_height, n_sub)
+        if film_thickness != 'wg_height' and film_thickness != wg_height:
+            assert film_thickness > 0.
+            self.add_slab(film_thickness-wg_height, n_wg)
 
         if angle and not trap_len:
             trap_len = get_trap_length(angle, wg_height)
