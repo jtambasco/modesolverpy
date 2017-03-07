@@ -88,8 +88,10 @@ class _AbstractStructure(metaclass=abc.ABCMeta):
     def n_func(self):
         return interpolate.interp2d(self.x, self.y, self.n)
 
-    def _add_triangular_sides(self, xy_mask, trap_len, y_top_right, y_bot_left, x_top_right, x_bot_left, n_material):
-
+    def _add_triangular_sides(self, xy_mask, angle, y_top_right, y_bot_left,
+                              x_top_right, x_bot_left, n_material):
+        angle = np.radians(angle)
+        trap_len = (y_top_right - y_bot_left) / np.tan(angle)
         num_x_iterations = round(trap_len/self.x_step)
         y_per_iteration = round(self.y_pts / num_x_iterations)
 
@@ -108,7 +110,7 @@ class _AbstractStructure(metaclass=abc.ABCMeta):
         return self.n
 
     def add_material(self, x_bot_left, y_bot_left, x_top_right, y_top_right,
-                     n_material, trap_len = 0):
+                     n_material, angle=0):
 
         x_mask = np.logical_and(x_bot_left<=self.x, self.x<=x_top_right)
         y_mask = np.logical_and(y_bot_left<=self.y, self.y<=y_top_right)
@@ -116,8 +118,9 @@ class _AbstractStructure(metaclass=abc.ABCMeta):
         xy_mask = np.kron(y_mask, x_mask).reshape((y_mask.size, x_mask.size))
         self.n[xy_mask] = n_material
 
-        if trap_len:
-            self._add_triangular_sides(xy_mask,trap_len, y_top_right, y_bot_left, x_top_right, x_bot_left, n_material)
+        if angle:
+            self._add_triangular_sides(xy_mask, angle, y_top_right, y_bot_left,
+                                       x_top_right, x_bot_left, n_material)
 
         return self.n
 
@@ -218,7 +221,7 @@ class Slab(Structure):
         self.position = Slab.position
         Slab.position += 1
 
-    def add_material(self, x_min, x_max, n, trap_len = 0):
-        Structure.add_material(self, x_min, self.y_min, x_max, self.y_max, n, trap_len)
+    def add_material(self, x_min, x_max, n, angle=0):
+        Structure.add_material(self, x_min, self.y_min, x_max, self.y_max, n, angle)
         return self.n
 
