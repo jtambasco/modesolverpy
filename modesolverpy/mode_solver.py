@@ -107,7 +107,7 @@ class _ModeSolver(metaclass=abc.ABCMeta):
         fn = field_name[0] + '_{' + field_name[1:] + '}'
         title = 'Mode %i |%s| Profile' % (mode_number, fn)
         if n_eff:
-            title += ', n_{eff}: %0.3f' % n_eff.real
+            title += ', n_{eff}: ' + '{:.3f}'.format(n_eff)
         if subtitle:
             title += '\n{/*0.7 %s}' % subtitle
 
@@ -162,7 +162,7 @@ class ModeSolverSemiVectorial(_ModeSolver):
         if self._mode_profiles:
             r['modes'] = self._ms.modes
             self._ms.modes[0] = np.abs(self._ms.modes[0])
-            self._initial_mode_guess = self._ms.modes[0].real
+            self._initial_mode_guess = np.abs(self._ms.modes[0])
 
         return r
 
@@ -214,7 +214,7 @@ class ModeSolverFullyVectorial(_ModeSolver):
         if self._mode_profiles:
             r['modes'] = self._ms.modes
             self._ms.modes[0] = np.abs(self._ms.modes[0])
-            self._initial_mode_guess = self._ms.modes[0].real
+            self._initial_mode_guess = np.abs(self._ms.modes[0])
 
         return r
 

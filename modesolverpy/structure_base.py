@@ -82,7 +82,10 @@ class _AbstractStructure(metaclass=abc.ABCMeta):
 
     @property
     def eps_func(self):
-        return interpolate.interp2d(self.x, self.y, self.eps)
+        interp_real = interpolate.interp2d(self.x, self.y, self.eps.real)
+        interp_imag = interpolate.interp2d(self.x, self.y, self.eps.imag)
+        interp = lambda x, y: interp_real(x, y) + 1.j*interp_imag(x, y)
+        return interp
 
     @property
     def n_func(self):
@@ -128,7 +131,7 @@ class _AbstractStructure(metaclass=abc.ABCMeta):
         path = os.path.dirname(sys.modules[__name__].__file__) + '/'
 
         with open(filename, 'w') as fs:
-            for n_row in self.n[::-1]:
+            for n_row in np.abs(self.n[::-1]):
                 n_str = ','.join([str(v) for v in n_row])
                 fs.write(n_str+'\n')
 
@@ -161,7 +164,7 @@ class Structure(_AbstractStructure):
         self.x_step = x_step
         self.y_step = y_step
         self.n_background = n_background
-        self._n = np.ones((self.y.size,self.x.size)) * n_background
+        self._n = np.ones((self.y.size,self.x.size), 'complex_') * n_background
 
     @property
     def n(self):
