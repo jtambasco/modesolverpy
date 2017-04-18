@@ -1,13 +1,15 @@
 import numpy as np
 
-def directional_coupler_lc(wavelength, n_eff_1, n_eff_2):
+def directional_coupler_lc(wavelength_nm, n_eff_1, n_eff_2):
     '''
     Calculates the coherence length (100% power transfer) of a
     directional coupler.
     '''
-    dn_eff = (n_eff1 - n_eff2).real
-    lc = wl / (2.*dn_eff)
-    return lc
+    wavelength_m = wavelength_nm * 1.e-9
+    dn_eff = (n_eff_1 - n_eff_2).real
+    lc_m = wavelength_m / (2.*dn_eff)
+    lc_um = lc_m * 1.e6
+    return lc_um
 
 def grating_coupler_period(wavelength, n_eff, n_clad,
                            incidence_angle_deg, diffration_order=1):
