@@ -166,7 +166,7 @@ class ModeSolverSemiVectorial(_ModeSolver):
 
         return r
 
-    def write_modes_to_file(self, filename='mode.dat', plot=True):
+    def write_modes_to_file(self, filename='mode.dat', plot=True, analyse=True):
         modes_directory = './modes/'
         if not os.path.isdir(modes_directory):
             os.mkdir(modes_directory)
@@ -177,7 +177,7 @@ class ModeSolverSemiVectorial(_ModeSolver):
                                                     i, filename)
             self._write_mode_to_file(mode.real, filename_mode)
             if plot:
-                if i == 0:
+                if i == 0 and analyse:
                     A, centre, sigma_2 = anal.fit_gaussian(self._structure.xc,
                                                            self._structure.yc,
                                                            mode.real)
