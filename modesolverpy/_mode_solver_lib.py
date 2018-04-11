@@ -239,8 +239,8 @@ class _ModeSolverSemiVectorial():
         eigs = eigen.eigs(A,
                           k=neigs,
                           which='LR',
-                          tol=tol,
-                          ncv=10 * neigs,
+                          tol=0.001,
+                          ncv=None,
                           v0 = initial_mode_guess,
                           return_eigenvectors=mode_profiles)
         if mode_profiles:
@@ -950,8 +950,8 @@ class _ModeSolverVectorial():
         [eigvals, eigvecs] = eigen.eigs(A,
                                         k=neigs,
                                         which='LR',
-                                        tol=tol,
-                                        ncv=10 * neigs,
+                                        tol=0.001,
+                                        ncv=None,
                                         v0 = initial_mode_guess,
                                         return_eigenvectors=mode_profiles,
                                         sigma=shift)

@@ -107,7 +107,7 @@ class _ModeSolver(metaclass=abc.ABCMeta):
         fn = field_name[0] + '_{' + field_name[1:] + '}'
         title = 'Mode %i |%s| Profile' % (mode_number, fn)
         if n_eff:
-            title += ', n_{eff}: ' + '{:.3f}'.format(n_eff)
+            title += ', n_{eff}: ' + '{:.3f}'.format(n_eff.real)
         if subtitle:
             title += '\n{/*0.7 %s}' % subtitle
 
@@ -141,11 +141,10 @@ class _ModeSolver(metaclass=abc.ABCMeta):
 class ModeSolverSemiVectorial(_ModeSolver):
     def __init__(self, n_eigs, tol=0., boundary='0000',
                  mode_profiles=True, initial_mode_guess=None,
-                 n_eff_guess=None, semi_vectorial_method='Ex'):
+                 semi_vectorial_method='Ex'):
         self._semi_vectorial_method = semi_vectorial_method
         _ModeSolver.__init__(self, n_eigs, tol, boundary,
-                             mode_profiles, initial_mode_guess,
-                             n_eff_guess)
+                             mode_profiles, initial_mode_guess)
 
     def _solve(self, structure, wavelength):
         self._structure = structure

@@ -15,7 +15,7 @@ def grating_coupler_period(wavelength, n_eff, n_clad,
                            incidence_angle_deg, diffration_order=1):
 
     k0 = 2.*np.pi / wavelength
-    beta = n_eff * k0
+    beta = n_eff.real * k0
     n_inc = n_clad
 
     grating_period = (2.*np.pi*diffration_order) \

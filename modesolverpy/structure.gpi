@@ -1,12 +1,13 @@
 set dataf sep ','
 
-set term pngcairo size 25cm,20cm enhanced
+set term pngcairo size 20cm,20cm enhanced
 set out filename_image
 
 set view map
 set palette defined (0 "gray90", 1 "royalblue", 2 "midnight-blue")
 stats filename_data matrix nooutput
 set cbrange [1:STATS_max]
+unset colorbox
 
 unset key
 set tics scale 0
