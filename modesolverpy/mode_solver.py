@@ -166,7 +166,7 @@ class ModeSolverSemiVectorial(_ModeSolver):
         return r
 
     def write_modes_to_file(self, filename='mode.dat', plot=True, analyse=True):
-        modes_directory = './modes/'
+        modes_directory = './modes_semi_vec/'
         if not os.path.isdir(modes_directory):
             os.mkdir(modes_directory)
         filename = modes_directory + filename
@@ -192,11 +192,10 @@ class ModeSolverSemiVectorial(_ModeSolver):
         return self.modes
 
 class ModeSolverFullyVectorial(_ModeSolver):
-    def __init__(self, n_eigs, tol=0., boundary='0000',
-                 mode_profiles=True, initial_mode_guess=None,
-                 n_eff_guess=None):
+    def __init__(self, n_eigs, tol=0.001, boundary='0000',
+                 initial_mode_guess=None, n_eff_guess=None):
         _ModeSolver.__init__(self, n_eigs, tol, boundary,
-                             mode_profiles, initial_mode_guess,
+                             False, initial_mode_guess,
                              n_eff_guess)
 
     def _solve(self, structure, wavelength):
@@ -209,25 +208,27 @@ class ModeSolverFullyVectorial(_ModeSolver):
         self.n_effs = self._ms.neff
 
         r = {'n_effs': self.n_effs}
+        r['modes'] = self._ms.modes
 
-        if self._mode_profiles:
-            r['modes'] = self._ms.modes
-            self._ms.modes[0] = np.abs(self._ms.modes[0])
-            self._initial_mode_guess = np.abs(self._ms.modes[0])
+        self._initial_mode_guess = None
 
         return r
 
     def write_modes_to_file(self, filename='mode.dat', plot=True,
                              fields_to_write=('Ex', 'Ey', 'Ez', 'Hx', 'Hy', 'Hz')):
-        modes_directory = './modes/'
+        modes_directory = './modes_full_vec/'
         if not os.path.isdir(modes_directory):
             os.mkdir(modes_directory)
-        filename = modes_directory + filename
 
-        for i, mode in enumerate(self.modes):
+        for i, mode in enumerate(self._ms.modes):
+            mode_directory = '%s/mode_%i/' % (modes_directory, i)
+            if not os.path.isdir(mode_directory):
+                os.mkdir(mode_directory)
+            filename_full = mode_directory + filename
+
             for field_name, field_profile in mode.fields.items():
                 if field_name in fields_to_write:
-                    filename_mode = self._get_mode_filename(field_name, i, filename)
+                    filename_mode = self._get_mode_filename(field_name, i, filename_full)
                     self._write_mode_to_file(field_profile.real,
                                              filename_mode)
                     if plot:

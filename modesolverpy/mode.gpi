@@ -6,7 +6,14 @@ set out filename_image
 set view map
 set palette defined (0 "green", 1 "blue", 2 "black", 3 "red", 4 "yellow")
 stats filename_data matrix nooutput
-set cbrange [-STATS_max:STATS_max]
+if (abs(STATS_max) > abs(STATS_min)) {
+    inv = 1
+    smm = abs(STATS_max)
+} else {
+    inv = -1
+    smm = abs(STATS_min)
+}
+set cbrange [-smm:smm]
 unset colorbox
 
 unset key
@@ -42,4 +49,4 @@ if (ctr_x > 0. && ctr_y > 0.) {
 }
 
 splot filename_data matrix u (x_step*$1 + x_min):\
-    (y_step*$2 + y_min):3 w pm3d
+    (y_step*$2 + y_min):(inv*$3) w pm3d
