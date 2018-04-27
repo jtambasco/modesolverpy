@@ -76,6 +76,13 @@ class _ModeSolverSemiVectorial():
     """
 
     def __init__(self, wl, structure, boundary='0000', method='Ex'):
+        # Polarisation bug fix.
+        assert method in ('Ex', 'Ey'), 'Invalid polarisation method.'
+        if method == 'Ex':
+            method = 'Ey'
+        elif method == 'Ey':
+            method = 'Ex'
+
         self.wl = wl
         self.x = structure.y
         self.y = structure.x
@@ -984,7 +991,7 @@ class _ModeSolverVectorial():
             self.modes = []
             for (neff, Hx, Hy, Hz, Ex, Ey, Ez) in zip(neffs, Hxs, Hys, Hzs, Exs, Eys, Ezs):
                 self.modes.append(
-                    FDMode(self.wl, self.x, self.y, neff, Ex, Ey, Ez, Hx, Hy, Hz).normalize())
+                    FDMode(self.wl, self.x, self.y, neff, Ey, Ex, Ez, Hy, Hx, Hz).normalize())
 
         return self
 
