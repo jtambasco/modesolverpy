@@ -91,7 +91,7 @@ structure = st.RidgeWaveguide(x_step,
 	                          film_thickness)
 structure.write_to_file('example_structure_1.dat')
 
-mode_solver = ms.ModeSolverSemiVectorial(2)
+mode_solver = ms.ModeSolverSemiVectorial(2, semi_vectorial_method='Ey')
 mode_solver.solve(structure, wavelength)
 mode_solver.write_modes_to_file('example_modes_1.dat')
 ```
@@ -100,7 +100,7 @@ mode_solver.write_modes_to_file('example_modes_1.dat')
 <img src="./examples/example_structure_1.png " width="400">
 
 ### Modes
-<img src="./examples/example_modes_1_Ex_0.png " width="400"> <img src="./examples/example_modes_1_Ex_1.png " width="400">
+<img src="./examples/example_modes_1_Ey_0.png " width="400"> <img src="./examples/example_modes_1_Ey_1.png " width="400">
 
 ## Contributions
 If you add functionality, I'd be interested and would appreciate if you send me a pull request.

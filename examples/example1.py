@@ -33,6 +33,6 @@ structure = st.RidgeWaveguide(x_step,
 
 structure.write_to_file('example_structure_1.dat')
 
-mode_solver = ms.ModeSolverSemiVectorial(2)
+mode_solver = ms.ModeSolverSemiVectorial(2, semi_vectorial_method='Ey')
 mode_solver.solve(structure, wavelength)
 mode_solver.write_modes_to_file('example_modes_1.dat')
