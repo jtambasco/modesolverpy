@@ -163,6 +163,8 @@ class ModeSolverSemiVectorial(_ModeSolver):
             self._ms.modes[0] = np.abs(self._ms.modes[0])
             self._initial_mode_guess = np.abs(self._ms.modes[0])
 
+        self.modes = self._ms.modes
+
         return r
 
     def write_modes_to_file(self, filename='mode.dat', plot=True, analyse=True):
