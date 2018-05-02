@@ -42,6 +42,9 @@ class WgArray(Slabs):
         wg_gaps_pad.append(0.)
 
         self.add_slab(sub_height, n_sub)
+        if film_thickness != 'wg_height' and film_thickness != wg_height:
+            assert film_thickness > 0.
+            self.add_slab(film_thickness-wg_height, n_wg)
 
         k = self.add_slab(wg_height, n_clad)
         air_width_l_r = 0.5*(sub_width - np.sum(wg_widths) - np.sum(wg_gaps))
