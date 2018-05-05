@@ -5,8 +5,9 @@ def _make_gaussian(x_pts, y_pts, mfd, x_offset=0, y_offset=0):
     y0 = (y_pts[-1]+y_pts[0])/2 + y_offset
     xx, yy = np.meshgrid(x_pts, y_pts)
 
-    sigma_x = mfd
-    sigma_y = mfd
+    sigma = mfd * 0.707 / 2.355
+    sigma_x = sigma
+    sigma_y = sigma
 
     gaus_2d = np.exp(-((xx-x0)**2/(2*sigma_x**2)+
                        (yy-y0)**2/(2*sigma_y**2)))
@@ -15,8 +16,11 @@ def _make_gaussian(x_pts, y_pts, mfd, x_offset=0, y_offset=0):
     return gaus_2d
 
 def _overlap(mode, gaussian):
+    gaus_sqrt = np.sqrt(gaussian)
     mode_norm = mode / np.sum(mode)
-    eta = np.sum(mode_norm*gaussian)**2 / (np.sum(mode_norm**2) * np.sum(gaussian**2))
+    np.savetxt('gaus.dat', gaussian)
+    np.savetxt('gaus_sqrt.dat', gaus_sqrt)
+    eta = np.sum(mode_norm*gaus_sqrt)**2 / (np.sum(mode_norm**2) * np.sum(gaus_sqrt**2))
     return eta
 
 def reflection(n1, n2):
