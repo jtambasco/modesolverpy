@@ -58,6 +58,22 @@ class _ModeSolver(metaclass=abc.ABCMeta):
 
         return n_effs
 
+    def solve_ng(self, structure, wavelength, wavelength_step=0.1):
+        self.solve(structure, wavelength)
+        n_ctrs = self.n_effs
+
+        self.solve(structure, wavelength-wavelength_step)
+        n_bcks = self.n_effs
+
+        self.solve(structure, wavelength+wavelength_step)
+        n_frws = self.n_effs
+
+        n_gs = []
+        for n_ctr, n_bck, n_frw in zip(n_ctrs, n_bcks, n_frws):
+            n_gs.append(n_ctr - wavelength*(n_frw-n_bck)/(2*wavelength_step))
+
+        return n_gs
+
     def _get_mode_filename(self, field_name, mode_number, filename):
         filename_prefix, filename_ext = os.path.splitext(filename)
         filename_mode = filename_prefix + '_' + field_name + \
