@@ -58,14 +58,15 @@ class _ModeSolver(metaclass=abc.ABCMeta):
 
         return n_effs
 
-    def solve_ng(self, structure, wavelength, wavelength_step=0.1):
-        self.solve(structure, wavelength)
+    def solve_ng(self, structure_ctr, structure_bck, structure_frw,
+                 wavelength, wavelength_step=0.1):
+        self.solve(structure_ctr, wavelength)
         n_ctrs = self.n_effs
 
-        self.solve(structure, wavelength-wavelength_step)
+        self.solve(structure_bck, wavelength-wavelength_step)
         n_bcks = self.n_effs
 
-        self.solve(structure, wavelength+wavelength_step)
+        self.solve(structure_frw, wavelength+wavelength_step)
         n_frws = self.n_effs
 
         n_gs = []
