@@ -199,6 +199,7 @@ class ModeSolverSemiVectorial(_ModeSolver):
             filename_mode = self._get_mode_filename(self._semi_vectorial_method,
                                                     i, filename)
             self._write_mode_to_file(np.abs(mode), filename_mode)
+
             if plot:
                 if i == 0 and analyse:
                     A, centre, sigma_2 = anal.fit_gaussian(self._structure.xc,
@@ -274,6 +275,12 @@ class ModeSolverFullyVectorial(_ModeSolver):
         modes_directory = './modes_full_vec/'
         if not os.path.exists(modes_directory):
             os.mkdir(modes_directory)
+
+        with open(modes_directory+'mode_info', 'w') as fs:
+            fs.write('# Mode type, % in major direction\n')
+            for mode_type, percentage in self.mode_types:
+                line = '%s,%.2f' % (mode_type, percentage)
+                fs.write(line+'\n')
 
         for i, (mode, areas) in enumerate(zip(self._ms.modes, self.overlaps)):
             mode_directory = '%smode_%i/' % (modes_directory, i)
