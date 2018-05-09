@@ -14,7 +14,7 @@ if (abs(STATS_max) > abs(STATS_min)) {
     smm = abs(STATS_min)
 }
 set cbrange [-smm:smm]
-unset colorbox
+set colorbox
 
 unset key
 set tics scale 0

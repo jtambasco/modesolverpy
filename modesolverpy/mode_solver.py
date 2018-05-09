@@ -22,6 +22,8 @@ class _ModeSolver(metaclass=abc.ABCMeta):
 
         self.n_effs = None
         self.modes = None
+        self.mode_types = None
+        self.overlaps = None
 
         self._path = os.path.dirname(sys.modules[__name__].__file__) + '/'
 
@@ -120,11 +122,14 @@ class _ModeSolver(metaclass=abc.ABCMeta):
         return args
 
     def _plot_mode(self, field_name, mode_number, filename_mode, n_eff=None,
-                   subtitle='', e2_x=0., e2_y=0., ctr_x=0., ctr_y=0.):
+                   subtitle='', e2_x=0., e2_y=0., ctr_x=0., ctr_y=0.,
+                   area=None):
         fn = field_name[0] + '_{' + field_name[1:] + '}'
         title = 'Mode %i |%s| Profile' % (mode_number, fn)
         if n_eff:
             title += ', n_{eff}: ' + '{:.3f}'.format(n_eff.real)
+        if area:
+            title += ', A_%s: ' % field_name[1] + '{:.1f}\%'.format(area)
         if subtitle:
             title += '\n{/*0.7 %s}' % subtitle
 
@@ -193,12 +198,12 @@ class ModeSolverSemiVectorial(_ModeSolver):
         for i, mode in enumerate(self._ms.modes):
             filename_mode = self._get_mode_filename(self._semi_vectorial_method,
                                                     i, filename)
-            self._write_mode_to_file(mode.real, filename_mode)
+            self._write_mode_to_file(np.abs(mode), filename_mode)
             if plot:
                 if i == 0 and analyse:
                     A, centre, sigma_2 = anal.fit_gaussian(self._structure.xc,
                                                            self._structure.yc,
-                                                           mode.real)
+                                                           np.abs(mode))
                     subtitle = ('E_{max} = %.3f, (x_{max}, y_{max}) = (%.3f, %.3f), MFD_{x} = %.3f, '
                                 'MFD_{y} = %.3f') % (A, centre[0], centre[1], sigma_2[0], sigma_2[1])
                     self._plot_mode(self._semi_vectorial_method, i, filename_mode,
@@ -227,30 +232,62 @@ class ModeSolverFullyVectorial(_ModeSolver):
         self.n_effs = self._ms.neff
 
         r = {'n_effs': self.n_effs}
-        r['modes'] = self._ms.modes
+        r['modes'] = self.modes = self._ms.modes
+
+        self.overlaps = self._get_overlaps(self.modes)
+        self.mode_types = self._get_mode_types()
 
         self._initial_mode_guess = None
 
         return r
 
+    def _get_mode_types(self):
+        mode_types = []
+        labels = {0: 'qTE', 1: 'qTM', 2: 'qTE/qTM'}
+        for overlap in self.overlaps:
+            idx = np.argmax(overlap[0:3])
+            mode_types.append((labels[idx], np.round(overlap[idx],2)))
+        return mode_types
+
+    def _get_overlaps(self, fields):
+        mode_areas = []
+        for mode in self._ms.modes:
+            e_fields = (mode.fields['Ex'], mode.fields['Ey'], mode.fields['Ez'])
+            h_fields = (mode.fields['Hx'], mode.fields['Hy'], mode.fields['Hz'])
+
+            areas_e = [np.sum(np.abs(e)**2) for e in e_fields]
+            areas_e /= np.sum(areas_e)
+            areas_e *= 100
+
+            areas_h = [np.sum(np.abs(h)**2) for h in h_fields]
+            areas_h /= np.sum(areas_h)
+            areas_h *= 100
+
+            areas = areas_e.tolist()
+            areas.extend(areas_h)
+            mode_areas.append(areas)
+
+        return mode_areas
+
     def write_modes_to_file(self, filename='mode.dat', plot=True,
                              fields_to_write=('Ex', 'Ey', 'Ez', 'Hx', 'Hy', 'Hz')):
         modes_directory = './modes_full_vec/'
-        if not os.path.isdir(modes_directory):
+        if not os.path.exists(modes_directory):
             os.mkdir(modes_directory)
 
-        for i, mode in enumerate(self._ms.modes):
-            mode_directory = '%s/mode_%i/' % (modes_directory, i)
+        for i, (mode, areas) in enumerate(zip(self._ms.modes, self.overlaps)):
+            mode_directory = '%smode_%i/' % (modes_directory, i)
             if not os.path.isdir(mode_directory):
                 os.mkdir(mode_directory)
             filename_full = mode_directory + filename
 
-            for field_name, field_profile in mode.fields.items():
+            for (field_name, field_profile), area in zip(mode.fields.items(), areas):
                 if field_name in fields_to_write:
                     filename_mode = self._get_mode_filename(field_name, i, filename_full)
-                    self._write_mode_to_file(field_profile.real,
+                    self._write_mode_to_file(np.abs(field_profile),
                                              filename_mode)
                     if plot:
-                        self._plot_mode(field_name, i, filename_mode, self.n_effs[i])
+                        self._plot_mode(field_name, i, filename_mode, self.n_effs[i],
+                                        area=area)
 
         return self.modes

@@ -228,3 +228,150 @@ class Slab(Structure):
         Structure.add_material(self, x_min, self.y_min, x_max, self.y_max, n, angle)
         return self.n
 
+class StructureAni():
+    def __init__(self, structure_xx, structure_yy, structure_zz,
+                 structure_xy=None, structure_yx=None):
+        self.xx = structure_yy
+        self.yy = structure_xx
+        self.zz = structure_zz
+
+        if not structure_xy or not structure_yx:
+            struct_dummy = Structure(self.xx.x_step, self.xx.y_step,
+                                     self.xx.x_max, self.xx.y_max,
+                                     self.xx.x_min, self.xx.y_min,
+                                     n_background=0.)
+
+        if structure_xy:
+            self.yx = structure_xy
+        else:
+            self.yx = struct_dummy
+
+        if structure_yx:
+            self.xy = structure_yx
+        else:
+            self.xy = struct_dummy
+
+        self.axes = (self.xx, self.xy, self.yx, self.yy, self.zz)
+        self.axes_str = ('xx', 'xy', 'yx', 'yy', 'zz')
+
+    @property
+    def n(self):
+        return [a.n for a in self.axes]
+
+    @property
+    def x_step(self):
+        return self.xx.x_step
+
+    @property
+    def y_step(self):
+        return self.xx.y_step
+
+    @property
+    def x_pts(self):
+        return int((self.xx.x_max - self.xx.x_min) / self.xx.x_step + 1)
+
+    @property
+    def y_pts(self):
+        return int((self.xx.y_max - self.xx.y_min) / self.xx.y_step)
+
+    @property
+    def x_ctr(self):
+        return 0.5*(self.xx.x_max + self.xx.x_min)
+
+    @property
+    def y_ctr(self):
+        return 0.5*(self.xx.y_max + self.xx.y_min)
+
+    @property
+    def xc(self):
+        return 0.5*(self.xx.x[1:] + self.xx.x[:-1])
+
+    @property
+    def yc(self):
+        return 0.5*(self.xx.y[1:] + self.xx.y[:-1])
+
+    @property
+    def xc_pts(self):
+        return self.xx.x_pts - 1
+
+    @property
+    def yc_pts(self):
+        return self.xx.y_pts - 1
+
+    @property
+    def xc_min(self):
+        return self.xx.xc[0]
+
+    @property
+    def xc_max(self):
+        return self.xx.xc[-1]
+
+    @property
+    def yc_min(self):
+        return self.xx.yc[0]
+
+    @property
+    def yc_max(self):
+        return self.xx.yc[-1]
+
+    @property
+    def x(self):
+        if None not in (self.xx.x_min, self.xx.x_max, self.xx.x_step) and \
+                self.xx.x_min != self.xx.x_max:
+            x = np.arange(self.xx.x_min, self.xx.x_max+self.xx.x_step-self.xx.y_step*0.1, self.xx.x_step)
+        else:
+            x = np.array([])
+        return x
+
+    @property
+    def y(self):
+        if None not in (self.xx.y_min, self.xx.y_max, self.xx.y_step) and \
+                self.xx.y_min != self.xx.y_max:
+            y = np.arange(self.xx.y_min, self.xx.y_max-self.xx.y_step*0.1, self.xx.y_step)
+        else:
+            y = np.array([])
+        return y
+
+    @property
+    def eps(self):
+        eps_ani = [a.n**2 for a in self.axes]
+        return eps_ani
+
+    @property
+    def eps_func(self):
+        return lambda x,y: tuple(axis.eps_func(x,y) for axis in self.axes)
+
+    @property
+    def n_func(self):
+        return lambda x,y: tuple(axis.n_func(x,y) for axis in self.axes)
+
+    def write_to_file(self, filename='material_index.dat', plot=True):
+        path = os.path.dirname(sys.modules[__name__].__file__) + '/'
+
+        dir_plot = 'material_index/'
+        if not os.path.exists(dir_plot):
+            os.makedirs(dir_plot)
+
+        for axis, name in zip(self.axes, self.axes_str):
+            root, ext = os.path.splitext(filename)
+            fn = dir_plot + root + '_'+ name + ext
+            with open(fn, 'w') as fs:
+                for n_row in np.abs(axis.n[::-1]):
+                    n_str = ','.join([str(v) for v in n_row])
+                    fs.write(n_str+'\n')
+
+            if plot:
+                filename_image_prefix, _ = os.path.splitext(fn)
+                filename_image = filename_image_prefix + '.png'
+                args = {
+                    'title': 'Refractive Index Profile',
+                    'x_pts': self.xx.x_pts,
+                    'y_pts': self.xx.y_pts,
+                    'x_min': self.xx.x_min,
+                    'x_max': self.xx.x_max,
+                    'y_min': self.xx.y_min,
+                    'y_max': self.xx.y_max,
+                    'filename_data': fn,
+                    'filename_image': filename_image
+                }
+                gp.gnuplot(path+'structure.gpi', args, silent=False)

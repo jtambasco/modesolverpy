@@ -17,6 +17,8 @@ import numpy
 import scipy
 import scipy.optimize
 
+import collections as col
+
 def trapz2(f, x=None, y=None, dx=1.0, dy=1.0):
     """Double integrate."""
     return numpy.trapz(numpy.trapz(f, x=y, dx=dy), x=x, dx=dx)
@@ -354,11 +356,13 @@ class _ModeSolverVectorial():
         yc = (y[:-1] + y[1:]) / 2
 
         tmp = epsfunc(yc, xc)
-        tmp = numpy.c_[tmp[:, 0:1], tmp, tmp[:, -1:]]
-        tmp = numpy.r_[tmp[0:1, :], tmp, tmp[-1:, :]]
         if isinstance(tmp, tuple):
+            tmp = [numpy.c_[t[:, 0:1], t, t[:, -1:]] for t in tmp]
+            tmp = [numpy.r_[t[0:1, :], t, t[-1:, :]] for t in tmp]
             epsxx, epsxy, epsyx, epsyy, epszz = tmp
         else:
+            tmp = numpy.c_[tmp[:, 0:1], tmp, tmp[:, -1:]]
+            tmp = numpy.r_[tmp[0:1, :], tmp, tmp[-1:, :]]
             epsxx = epsyy = epszz = tmp
             epsxy = epsyx = numpy.zeros_like(epsxx)
 
@@ -670,11 +674,13 @@ class _ModeSolverVectorial():
             yc = (y[:-1] + y[1:]) / 2
 
             tmp = epsfunc(yc, xc)
-            tmp = numpy.c_[tmp[:, 0:1], tmp, tmp[:, -1:]]
-            tmp = numpy.r_[tmp[0:1, :], tmp, tmp[-1:, :]]
             if isinstance(tmp, tuple):
+                tmp = [numpy.c_[t[:, 0:1], t, t[:, -1:]] for t in tmp]
+                tmp = [numpy.r_[t[0:1, :], t, t[-1:, :]] for t in tmp]
                 epsxx, epsxy, epsyx, epsyy, epszz = tmp
             else:
+                tmp = numpy.c_[tmp[:, 0:1], tmp, tmp[:, -1:]]
+                tmp = numpy.r_[tmp[0:1, :], tmp, tmp[-1:, :]]
                 epsxx = epsyy = epszz = tmp
                 epsxy = epsyx = numpy.zeros_like(epsxx)
 
@@ -1013,14 +1019,14 @@ class FDMode():
         self.Hy = Hy
         self.Hz = Hz
 
-        self.fields = {
+        self.fields = col.OrderedDict({
             'Ex': Ex,
             'Ey': Ey,
             'Ez': Ez,
             'Hx': Hx,
             'Hy': Hy,
             'Hz': Hz
-        }
+        })
 
     def norm(self):
         x = centered1d(self.x)
