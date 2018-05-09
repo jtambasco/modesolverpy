@@ -46,7 +46,7 @@ The main reasons to consider this library include:
 * some limited (at this stage) data processing (finding MFD of fundamental mode), and
 * easily extensible library.
 
-## Example
+## Example 1
 
 ### Semi-vectorial mode solving of a ridge waveguide
 The following example finds the first two modes of a waveguide with the following, arbitrary, parameters:
@@ -102,5 +102,83 @@ mode_solver.write_modes_to_file('example_modes_1.dat')
 ### Modes
 <img src="./examples/example_modes_1_Ey_0.png " width="400"> <img src="./examples/example_modes_1_Ey_1.png " width="400">
 
+## Example 2
+
+### Fully vectorial mode solving of anisotropic material
+The following example finds the first 6 modes of a contrived ridge waveguide in Z-cut KTP.
+
+The waveguide parameters are:
+* thin-film thickness: 1.2um,
+* waveguide height: 800nm,
+* waveguide width: 1.2um,
+* refractive index of waveguide: used Sellmeier equations to get n_xx, n_yy, n_zz at 1550nm,
+* refractive index of substrate: used Sellmeier equation to get SiO2 at 1550nm,
+* refractive index of cladding: 1, and
+* wavelength: 1550nm.
+
+### Python script
+```python
+import modesolverpy.mode_solver as ms
+import modesolverpy.structure as st
+import opticalmaterialspy as mat
+
+wl = 1.55
+x_step = 0.02
+y_step = 0.02
+wg_height = 0.8
+wg_width = 1.2
+sub_height = 1.0
+sub_width = 4.
+clad_height = 1.0
+film_thickness = 1.2
+angle = 60.
+
+def struct_func(n_sub, n_wg, n_clad):
+    return st.RidgeWaveguide(x_step, y_step, wg_height, wg_width,
+                             sub_height, sub_width, clad_height,
+                             n_sub, n_wg, angle, n_clad, film_thickness)
+
+n_sub = mat.SiO2().n(wl)
+n_wg_xx = mat.Ktp('x').n(wl)
+n_wg_yy = mat.Ktp('y').n(wl)
+n_wg_zz = mat.Ktp('z').n(wl)
+n_clad = mat.Air().n()
+
+struct_xx = struct_func(n_sub, n_wg_xx, n_clad)
+struct_yy = struct_func(n_sub, n_wg_yy, n_clad)
+struct_zz = struct_func(n_sub, n_wg_zz, n_clad)
+
+struct_ani = st.StructureAni(struct_xx, struct_yy, struct_zz)
+struct_ani.write_to_file()
+
+solver = ms.ModeSolverFullyVectorial(8)
+solver.solve(struct_ani, wl)
+solver.write_modes_to_file()
+```
+
+### Structure
+<img src="./examples/material_index/material_index_xx.png " width="250"> <img src="./examples/material_index/material_index_xy.png " width="250"> <img src="./examples/material_index/material_index_yx.png " width="250">
+<img src="./examples/material_index/material_index_yy.png " width="250"> <img src="./examples/material_index/material_index_zz.png " width="250">
+
+### Modes
+Only the first 4 (out of 8) modes are shown, and only the E-fields are shown (not H-fields).  For the rest of the images, look in the example folder or run the script.
+
+A_{x,y,z} give the percentage power of that particular E-field component with respect to the total of all components.
+
+Mode types:
+Order, type, percentage in direction of type, n_eff
+```
+F,qTE,95.65,1.623
+1,qTM,91.85,1.620
+2,qTE,88.12,1.522
+3,qTM,89.56,1.512
+```
+
+<img src="./examples/modes_full_vec/mode_0/mode_Ex_0.png " width="265"> <img src="./examples/modes_full_vec/mode_0/mode_Ey_0.png " width="265"> <img src="./examples/modes_full_vec/mode_0/mode_Ez_0.png " width="265">
+<img src="./examples/modes_full_vec/mode_1/mode_Ex_1.png " width="265"> <img src="./examples/modes_full_vec/mode_1/mode_Ey_1.png " width="265"> <img src="./examples/modes_full_vec/mode_1/mode_Ez_1.png " width="265">
+<img src="./examples/modes_full_vec/mode_2/mode_Ex_2.png " width="265"> <img src="./examples/modes_full_vec/mode_2/mode_Ey_2.png " width="265"> <img src="./examples/modes_full_vec/mode_2/mode_Ez_2.png " width="265">
+<img src="./examples/modes_full_vec/mode_3/mode_Ex_3.png " width="265"> <img src="./examples/modes_full_vec/mode_3/mode_Ey_3.png " width="265"> <img src="./examples/modes_full_vec/mode_3/mode_Ez_3.png " width="265">
+
+
 ## Contributions
-If you add functionality, I'd be interested and would appreciate if you send me a pull request.
+If you add functionality, please send me a pull request.

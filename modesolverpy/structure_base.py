@@ -364,7 +364,7 @@ class StructureAni():
                 filename_image_prefix, _ = os.path.splitext(fn)
                 filename_image = filename_image_prefix + '.png'
                 args = {
-                    'title': 'Refractive Index Profile',
+                    'title': 'Refractive Index Profile: %s' % name,
                     'x_pts': self.xx.x_pts,
                     'y_pts': self.xx.y_pts,
                     'x_min': self.xx.x_min,

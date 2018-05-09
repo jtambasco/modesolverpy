@@ -182,8 +182,8 @@ class ModeSolverSemiVectorial(_ModeSolver):
 
         if self._mode_profiles:
             r['modes'] = self._ms.modes
-            self._ms.modes[0] = np.abs(self._ms.modes[0])
-            self._initial_mode_guess = np.abs(self._ms.modes[0])
+            self._ms.modes[0] = np.real(self._ms.modes[0])
+            self._initial_mode_guess = np.real(self._ms.modes[0])
 
         self.modes = self._ms.modes
 
@@ -198,7 +198,7 @@ class ModeSolverSemiVectorial(_ModeSolver):
         for i, mode in enumerate(self._ms.modes):
             filename_mode = self._get_mode_filename(self._semi_vectorial_method,
                                                     i, filename)
-            self._write_mode_to_file(np.abs(mode), filename_mode)
+            self._write_mode_to_file(np.real(mode), filename_mode)
 
             if plot:
                 if i == 0 and analyse:
@@ -277,9 +277,13 @@ class ModeSolverFullyVectorial(_ModeSolver):
             os.mkdir(modes_directory)
 
         with open(modes_directory+'mode_info', 'w') as fs:
-            fs.write('# Mode type, % in major direction\n')
-            for mode_type, percentage in self.mode_types:
-                line = '%s,%.2f' % (mode_type, percentage)
+            fs.write('# Mode idx, Mode type, % in major direction, n_eff\n')
+            for i, (n_eff, (mode_type, percentage)) in enumerate(zip(self.n_effs, self.mode_types)):
+                if i == 0:
+                    mode_idx = 'F'
+                else:
+                    mode_idx = str(i)
+                line = '%s,%s,%.2f,%.3f' % (mode_idx, mode_type, percentage, n_eff.real)
                 fs.write(line+'\n')
 
         for i, (mode, areas) in enumerate(zip(self._ms.modes, self.overlaps)):
@@ -291,7 +295,7 @@ class ModeSolverFullyVectorial(_ModeSolver):
             for (field_name, field_profile), area in zip(mode.fields.items(), areas):
                 if field_name in fields_to_write:
                     filename_mode = self._get_mode_filename(field_name, i, filename_full)
-                    self._write_mode_to_file(np.abs(field_profile),
+                    self._write_mode_to_file(np.real(field_profile),
                                              filename_mode)
                     if plot:
                         self._plot_mode(field_name, i, filename_mode, self.n_effs[i],

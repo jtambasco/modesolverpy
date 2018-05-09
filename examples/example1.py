@@ -17,7 +17,6 @@ film_thickness = 0.5
 wavelength = 1.55
 angle = 75.
 
-# Simply uncomment the desired structure.
 structure = st.RidgeWaveguide(x_step,
                               y_step,
                               wg_height,
