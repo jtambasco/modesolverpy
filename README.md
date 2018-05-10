@@ -6,12 +6,10 @@ This finite difference mode solver is based on a modified version of [EMpy](http
 ## Installation
 It is recommend to install `modesolverpy` either via:
 
-### Pip:
+### Ubuntu/Mint/Debian:
 ```bash
-pip3 install setuptools
-pip3 install git+https://github.com/jtambasco/gnuplotpy.git
-pip3 install git+https://github.com/jtambasco/opticalmaterialspy.git
-pip3 install git+https://github.com/jtambasco/modesolverpy.git
+pip3 install modesolverpy
+apt install gnuplot
 ```
 
 ### Arch Linux:
