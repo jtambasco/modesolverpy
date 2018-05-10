@@ -1,10 +1,11 @@
 import modesolverpy.mode_solver as ms
 import modesolverpy.structure as st
 import opticalmaterialspy as mat
+import numpy as np
 
 wl = 1.55
-x_step = 0.02
-y_step = 0.02
+x_step = 0.06
+y_step = 0.06
 wg_height = 0.8
 wg_width = 1.8
 sub_height = 1.0
@@ -31,6 +32,10 @@ struct_zz = struct_func(n_sub, n_wg_zz, n_clad)
 struct_ani = st.StructureAni(struct_xx, struct_yy, struct_zz)
 struct_ani.write_to_file()
 
-solver = ms.ModeSolverFullyVectorial(8)
+solver = ms.ModeSolverFullyVectorial(4)
 solver.solve(struct_ani)
 solver.write_modes_to_file()
+
+solver.solve_ng(struct_ani, 1.55, 0.01)
+
+solver.solve_sweep_wavelength(struct_ani, np.linspace(1.50, 1.60, 21))

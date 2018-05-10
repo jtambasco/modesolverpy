@@ -27,6 +27,11 @@ class _ModeSolver(metaclass=abc.ABCMeta):
 
         self._path = os.path.dirname(sys.modules[__name__].__file__) + '/'
 
+        modes_directory = './modes_full_vec/'
+        if not os.path.exists(modes_directory):
+            os.mkdir(modes_directory)
+        self._modes_directory = modes_directory
+
     @abc.abstractmethod
     def _solve(self, structure, wavelength):
         pass
@@ -34,34 +39,44 @@ class _ModeSolver(metaclass=abc.ABCMeta):
     def solve(self, structure):
         return self._solve(structure, structure._wl)
 
-    def solve_sweep_structure(self, structures, wavelength, filename='n_effs.dat',
-                              plot=True):
+    def solve_sweep_structure(self, structures, sweep_param_list,
+                              filename='structure_n_effs.dat', plot=True):
         n_effs = []
         for s in tqdm.tqdm(structures, ncols=70):
-            n_effs.append(self.solve(s))
+            self.solve(s)
+            n_effs.append(np.real(self.n_effs))
 
         if filename:
-            self._write_n_effs_to_file(n_effs, filename)
+            self._write_n_effs_to_file(n_effs,
+                                       self._modes_directory+filename,
+                                       sweep_param_list)
             if plot:
-                self._plot_n_effs(filename, 'Structure number', 'n_{effs} vs structure')
+                self._plot_n_effs(self._modes_directory+filename,
+                                  'Structure number',
+                                  'n_{effs} vs structure')
 
         return n_effs
 
-    def solve_sweep_wavelength(self, structure, wavelengths, filename='n_effs.dat',
+    def solve_sweep_wavelength(self, structure, wavelengths, filename='wavelength_n_effs.dat',
                                plot=True):
         n_effs = []
         for w in tqdm.tqdm(wavelengths, ncols=70):
             structure.change_wavelength(w)
-            n_effs.append(self.solve(structure))
+            self.solve(structure)
+            n_effs.append(np.real(self.n_effs))
 
         if filename:
-            self._write_n_effs_to_file(n_effs, filename, wavelengths)
+            self._write_n_effs_to_file(n_effs,
+                                       self._modes_directory+filename,
+                                       wavelengths)
             if plot:
-                self._plot_n_effs(filename, 'Wavelength', 'n_{effs} vs wavelength')
+                self._plot_n_effs(self._modes_directory+filename,
+                                  'Wavelength',
+                                  'n_{effs} vs wavelength')
 
         return n_effs
 
-    def solve_ng(self, structure, wavelength, wavelength_step=0.1):
+    def solve_ng(self, structure, wavelength, wavelength_step=0.01, filename='ng'):
         self.solve(structure)
         n_ctrs = self.n_effs
 
@@ -77,6 +92,12 @@ class _ModeSolver(metaclass=abc.ABCMeta):
         for n_ctr, n_bck, n_frw in zip(n_ctrs, n_bcks, n_frws):
             n_gs.append(n_ctr - wavelength*(n_frw-n_bck)/(2*wavelength_step))
 
+        if filename:
+            with open(self._modes_directory+filename, 'w') as fs:
+                fs.write('# Mode idx, Group index\n')
+                for idx, n_g in enumerate(n_gs):
+                    fs.write('%i,%.3f\n' % (idx, np.round(n_g.real,3)))
+
         return n_gs
 
     def _get_mode_filename(self, field_name, mode_number, filename):
@@ -87,15 +108,13 @@ class _ModeSolver(metaclass=abc.ABCMeta):
 
     def _write_n_effs_to_file(self, n_effs, filename, x_vals=None):
         with open(filename, 'w') as fs:
-            for i, info in enumerate(n_effs):
-                n_effs = info['n_effs']
+            for i, n_eff in enumerate(n_effs):
                 if x_vals is not None:
-                    x = x_vals[i]
-                    x_type = '%0.4f'
+                    line_start = str(x_vals[i])+','
                 else:
-                    x = i
-                    x_type = '%i'
-                fs.write((x_type+',%.6f\n') % (x, n_effs[0].real))
+                    line_start = ''
+                line = ','.join([str(np.round(n,3)) for n in n_eff])
+                fs.write(line_start+line+'\n')
         return n_effs
 
     def _write_mode_to_file(self, mode, filename):
@@ -107,18 +126,19 @@ class _ModeSolver(metaclass=abc.ABCMeta):
 
     def _plot_n_effs(self, filename_n_effs, xlabel, title):
         args = {
-            'title': title,
-            'xlabel': xlabel,
-            'ylabel': 'n_{eff}',
+            'titl': title,
+            'xlab': xlabel,
+            'ylab': 'n_{eff}',
             'filename_data': filename_n_effs,
-            'filename_image': None
+            'filename_image': None,
+            'num_modes': len(self.modes)
         }
 
         filename_image_prefix, _ = os.path.splitext(filename_n_effs)
         filename_image = filename_image_prefix + '.png'
         args['filename_image'] = filename_image
 
-        gp.gnuplot(self._path+'n_effs.gpi', args)
+        gp.gnuplot(self._path+'n_effs.gpi', args, silent=False)
         gp.trim_pad_image(filename_image)
 
         return args
@@ -277,18 +297,13 @@ class ModeSolverFullyVectorial(_ModeSolver):
 
     def write_modes_to_file(self, filename='mode.dat', plot=True,
                              fields_to_write=('Ex', 'Ey', 'Ez', 'Hx', 'Hy', 'Hz')):
-        modes_directory = './modes_full_vec/'
-        if not os.path.exists(modes_directory):
-            os.mkdir(modes_directory)
+        modes_directory = self._modes_directory
 
         # Mode info file.
         with open(modes_directory+'mode_info', 'w') as fs:
             fs.write('# Mode idx, Mode type, % in major direction, n_eff\n')
             for i, (n_eff, (mode_type, percentage)) in enumerate(zip(self.n_effs, self.mode_types)):
-                if i == 0:
-                    mode_idx = 'F'
-                else:
-                    mode_idx = str(i)
+                mode_idx = str(i)
                 line = '%s,%s,%.2f,%.3f' % (mode_idx, mode_type, percentage, n_eff.real)
                 fs.write(line+'\n')
 
