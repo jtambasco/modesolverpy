@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(name='modesolverpy',
       version='0.1',
-      description='Photonic mode solver with a simple interface.',
+      description='Photonic mode solver.',
       url='https://github.com/jtambasco/modesolverpy',
       author='Jean-Luc Tambasco',
       author_email='an.obscurity@gmail.com',
@@ -11,7 +11,8 @@ setup(name='modesolverpy',
           'tqdm',
           'scipy',
           'numpy',
-          'gnuplotpy'
+          'gnuplotpy',
+          'opticalmaterialspy'
       ],
       packages=['modesolverpy'],
       include_package_data=True,
