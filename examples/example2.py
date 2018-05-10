@@ -32,10 +32,10 @@ struct_zz = struct_func(n_sub, n_wg_zz, n_clad)
 struct_ani = st.StructureAni(struct_xx, struct_yy, struct_zz)
 struct_ani.write_to_file()
 
-solver = ms.ModeSolverFullyVectorial(4)
+solver = ms.ModeSolverFullyVectorial(8)
 solver.solve(struct_ani)
 solver.write_modes_to_file()
 
 solver.solve_ng(struct_ani, 1.55, 0.01)
 
-solver.solve_sweep_wavelength(struct_ani, np.linspace(1.50, 1.60, 21))
+solver.solve_sweep_wavelength(struct_ani, np.linspace(1.501, 1.60, 21))

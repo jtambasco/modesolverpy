@@ -76,7 +76,7 @@ class _ModeSolver(metaclass=abc.ABCMeta):
 
         return n_effs
 
-    def solve_ng(self, structure, wavelength, wavelength_step=0.01, filename='ng'):
+    def solve_ng(self, structure, wavelength, wavelength_step=0.01, filename='ng.dat'):
         self.solve(structure)
         n_ctrs = self.n_effs
 
