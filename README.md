@@ -1,9 +1,7 @@
 # modesolverpy
-Photonic mode solver with a simple interface.
+Photonic mode solver with a nice interface and output.
 
-This finite difference mode solver is essentially a butchered version of [EMpy](https://github.com/lbolla/EMpy), with a simply interface to create typical waveguide structures.
-
-This was written to simplify the simulation of structures that I fabricate as part of my research, and I thought others may benefit from it too.
+This finite difference mode solver is based on a modified version of [EMpy](https://github.com/lbolla/EMpy).
 
 ## Installation
 It is recommend to install `modesolverpy` either via:
@@ -168,7 +166,7 @@ A_{x,y,z} give the percentage power of that particular E-field component with re
 Mode types:
 Order, type, percentage in direction of type, n_eff
 ```
-F,qTE,95.65,1.623
+0,qTE,95.65,1.623
 1,qTM,91.85,1.620
 2,qTE,88.12,1.522
 3,qTM,89.56,1.512
