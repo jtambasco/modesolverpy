@@ -171,9 +171,10 @@ class Structure(_AbstractStructure):
         return self._n
 
 class Slabs(_AbstractStructure):
-    def __init__(self, y_step, x_step, x_max, x_min=0.):
+    def __init__(self, wavelength, y_step, x_step, x_max, x_min=0.):
         _AbstractStructure.__init__(self)
 
+        self._wl = wavelength
         self.x_min = x_min
         self.x_max = x_max
         self.x_step = x_step
@@ -187,18 +188,38 @@ class Slabs(_AbstractStructure):
     def add_slab(self, height, n_background=1.):
         name = str(self.slab_count)
 
+        if not callable(n_background):
+            n_back = lambda wl: n_background
+        else:
+            n_back = n_background
+
         height_discretised = self.y_step*((height // self.y_step) + 1)
 
         y_min = self._next_start
         y_max = y_min + height_discretised
         self.slabs[name] = Slab(name, self.x_step, self.y_step, self.x_max,
-                                y_max, self.x_min, y_min, n_background)
+                                y_max, self.x_min, y_min, n_back, self._wl)
 
         self.y_max = y_max
         self._next_start = y_min + height_discretised
         self.slab_count += 1
 
         return name
+
+    def change_wavelength(self, wavelength):
+        for name, slab in self.slabs.items():
+            const_args = slab._const_args
+            mat_args = slab._mat_params
+
+            const_args[8] = wavelength
+
+            s = Slab(*const_args)
+            for mat_arg in mat_args:
+                s.add_material(*mat_arg)
+
+            self.slabs[name] = s
+
+        self._wl = wavelength
 
     @property
     def n(self):
@@ -217,15 +238,27 @@ class Slab(Structure):
     position = 0
 
     def __init__(self, name, x_step, y_step, x_max, y_max, x_min, y_min,
-                 n_background):
-        Structure.__init__(self, x_step, y_step, x_max, y_max, x_min, y_min,
-                           n_background)
+                 n_background, wavelength):
+        self._wl = wavelength
         self.name = name
         self.position = Slab.position
         Slab.position += 1
 
+        Structure.__init__(self, x_step, y_step, x_max, y_max, x_min, y_min,
+                           n_background(self._wl))
+
+        self._const_args = [name, x_step, y_step, x_max, y_max, x_min, y_min, n_background, wavelength]
+        self._mat_params = []
+
     def add_material(self, x_min, x_max, n, angle=0):
-        Structure.add_material(self, x_min, self.y_min, x_max, self.y_max, n, angle)
+        self._mat_params.append([x_min, x_max, n, angle])
+
+        if not callable(n):
+            n_mat = lambda wl: n
+        else:
+            n_mat = n
+
+        Structure.add_material(self, x_min, self.y_min, x_max, self.y_max, n_mat(self._wl), angle)
         return self.n
 
 class StructureAni():
@@ -240,6 +273,7 @@ class StructureAni():
                                      self.xx.x_max, self.xx.y_max,
                                      self.xx.x_min, self.xx.y_min,
                                      n_background=0.)
+            struct_dummy._wl = self.xx._wl
 
         if structure_xy:
             self.yx = structure_xy
@@ -250,6 +284,11 @@ class StructureAni():
             self.xy = structure_yx
         else:
             self.xy = struct_dummy
+
+        assert self.xx._wl == self.xy._wl == self.yx._wl == \
+               self.yy._wl == self.zz._wl
+
+        self._wl = structure_xx._wl
 
         self.axes = (self.xx, self.xy, self.yx, self.yy, self.zz)
         self.axes_str = ('xx', 'xy', 'yx', 'yy', 'zz')
@@ -375,3 +414,10 @@ class StructureAni():
                     'filename_image': filename_image
                 }
                 gp.gnuplot(path+'structure.gpi', args, silent=False)
+
+    def change_wavelength(self, wavelength):
+        for axis in self.axes:
+            if issubclass(type(axis), Slabs):
+                axis.change_wavelength(wavelength)
+        self.xx, self.xy, self.yx, self.yy, self.zz = self.axes
+        self._wl = wavelength

@@ -31,14 +31,14 @@ class _ModeSolver(metaclass=abc.ABCMeta):
     def _solve(self, structure, wavelength):
         pass
 
-    def solve(self, structure, wavelength):
-        return self._solve(structure, wavelength)
+    def solve(self, structure):
+        return self._solve(structure, structure._wl)
 
     def solve_sweep_structure(self, structures, wavelength, filename='n_effs.dat',
                               plot=True):
         n_effs = []
         for s in tqdm.tqdm(structures, ncols=70):
-            n_effs.append(self.solve(s, wavelength))
+            n_effs.append(self.solve(s))
 
         if filename:
             self._write_n_effs_to_file(n_effs, filename)
@@ -51,7 +51,8 @@ class _ModeSolver(metaclass=abc.ABCMeta):
                                plot=True):
         n_effs = []
         for w in tqdm.tqdm(wavelengths, ncols=70):
-            n_effs.append(self.solve(structure, w))
+            structure.change_wavelength(w)
+            n_effs.append(self.solve(structure))
 
         if filename:
             self._write_n_effs_to_file(n_effs, filename, wavelengths)
@@ -60,15 +61,16 @@ class _ModeSolver(metaclass=abc.ABCMeta):
 
         return n_effs
 
-    def solve_ng(self, structure_ctr, structure_bck, structure_frw,
-                 wavelength, wavelength_step=0.1):
-        self.solve(structure_ctr, wavelength)
+    def solve_ng(self, structure, wavelength, wavelength_step=0.1):
+        self.solve(structure)
         n_ctrs = self.n_effs
 
-        self.solve(structure_bck, wavelength-wavelength_step)
+        structure.change_wavelength(wavelength-wavelength_step)
+        self.solve(structure)
         n_bcks = self.n_effs
 
-        self.solve(structure_frw, wavelength+wavelength_step)
+        structure.change_wavelength(wavelength+wavelength_step)
+        self.solve(structure)
         n_frws = self.n_effs
 
         n_gs = []
@@ -123,13 +125,16 @@ class _ModeSolver(metaclass=abc.ABCMeta):
 
     def _plot_mode(self, field_name, mode_number, filename_mode, n_eff=None,
                    subtitle='', e2_x=0., e2_y=0., ctr_x=0., ctr_y=0.,
-                   area=None):
+                   area=None, wavelength=None):
         fn = field_name[0] + '_{' + field_name[1:] + '}'
         title = 'Mode %i |%s| Profile' % (mode_number, fn)
         if n_eff:
             title += ', n_{eff}: ' + '{:.3f}'.format(n_eff.real)
+        if wavelength:
+            title += ', λ = %s ' % '{:.3f} µm'.format(wavelength)
         if area:
             title += ', A_%s: ' % field_name[1] + '{:.1f}\%'.format(area)
+
         if subtitle:
             title += '\n{/*0.7 %s}' % subtitle
 
@@ -209,10 +214,10 @@ class ModeSolverSemiVectorial(_ModeSolver):
                                 'MFD_{y} = %.3f') % (A, centre[0], centre[1], sigma_2[0], sigma_2[1])
                     self._plot_mode(self._semi_vectorial_method, i, filename_mode,
                                     self.n_effs[i], subtitle, sigma_2[0], sigma_2[1],
-                                    centre[0], centre[1])
+                                    centre[0], centre[1], wavelength=self._structure._wl)
                 else:
                     self._plot_mode(self._semi_vectorial_method, i, filename_mode,
-                                    self.n_effs[i])
+                                    self.n_effs[i], wavelength=self._structure._wl)
 
         return self.modes
 
@@ -276,6 +281,7 @@ class ModeSolverFullyVectorial(_ModeSolver):
         if not os.path.exists(modes_directory):
             os.mkdir(modes_directory)
 
+        # Mode info file.
         with open(modes_directory+'mode_info', 'w') as fs:
             fs.write('# Mode idx, Mode type, % in major direction, n_eff\n')
             for i, (n_eff, (mode_type, percentage)) in enumerate(zip(self.n_effs, self.mode_types)):
@@ -286,6 +292,7 @@ class ModeSolverFullyVectorial(_ModeSolver):
                 line = '%s,%s,%.2f,%.3f' % (mode_idx, mode_type, percentage, n_eff.real)
                 fs.write(line+'\n')
 
+        # Mode field plots.
         for i, (mode, areas) in enumerate(zip(self._ms.modes, self.overlaps)):
             mode_directory = '%smode_%i/' % (modes_directory, i)
             if not os.path.isdir(mode_directory):
@@ -299,6 +306,6 @@ class ModeSolverFullyVectorial(_ModeSolver):
                                              filename_mode)
                     if plot:
                         self._plot_mode(field_name, i, filename_mode, self.n_effs[i],
-                                        area=area)
+                                        area=area, wavelength=self._structure._wl)
 
         return self.modes
