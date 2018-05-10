@@ -17,7 +17,8 @@ film_thickness = 0.5
 wavelength = 1.55
 angle = 75.
 
-structure = st.RidgeWaveguide(x_step,
+structure = st.RidgeWaveguide(wavelength,
+                              x_step,
                               y_step,
                               wg_height,
                               wg_width,
@@ -33,5 +34,5 @@ structure = st.RidgeWaveguide(x_step,
 structure.write_to_file('example_structure_1.dat')
 
 mode_solver = ms.ModeSolverSemiVectorial(2, semi_vectorial_method='Ey')
-mode_solver.solve(structure, wavelength)
+mode_solver.solve(structure)
 mode_solver.write_modes_to_file('example_modes_1.dat')
