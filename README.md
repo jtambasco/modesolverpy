@@ -1,7 +1,7 @@
 # modesolverpy
 Photonic mode solver with a nice interface and output.
 
-This finite difference mode solver is based on a modified version of [EMpy](https://github.com/lbolla/EMpy).
+The documentation for this project can be found [here](http://modesolverpy.rtfd.io).
 
 ## Installation
 It is recommend to install `modesolverpy` either via:
@@ -213,3 +213,6 @@ Mode types:
 
 ## Contributions
 If you add functionality, please send me a pull request.
+
+## Acknowledgments
+This finite difference mode solver is based on a modified version of [EMpy](https://github.com/lbolla/EMpy).

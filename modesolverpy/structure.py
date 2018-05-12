@@ -3,6 +3,54 @@ from .structure_base import *
 import opticalmaterialspy as mat
 
 class RidgeWaveguide(Slabs):
+    '''
+    A general ridge waveguide structure.
+
+    Args:
+        wavelength (float): Wavelength the structure should
+            operate at.
+        x_step (float): The grid step in x that the structure
+            is created on.
+        y_step (float): The grid step in y that the structure
+            is created on.
+        wg_height (float): The height of the ridge.
+        wg_width (float): The width of the ridge.
+        sub_height (float): The thickness of the substrate.
+        sub_width (float): The width of the substrate.
+        clad_height (float): The thickness of the cladding.
+        n_sub (float, function): Refractive index of the
+            substrate.  Either a constant (`float`), or
+            a function that accepts one parameters, the
+            wavelength, and returns a float of the refractive
+            index.  This is useful when doing wavelength
+            sweeps and solving for the group velocity.  The
+            function provided could be a Sellmeier equation.
+        n_wg (float, function): Refractive index of the
+            waveguide.  Either a constant (`float`), or
+            a function that accepts one parameters, the
+            wavelength, and returns a float of the refractive
+            index.  This is useful when doing wavelength
+            sweeps and solving for the group velocity.  The
+            function provided could be a Sellmeier equation.
+        angle (float): The angle of the sidewall [degrees] of
+            the waveguide.  Default is 0 degrees (vertical
+            sidewalls).
+        n_clad (float, function): Refractive index of the
+            cladding.  Either a constant (`float`), or
+            a function that accepts one parameters, the
+            wavelength, and returns a float of the refractive
+            index.  This is useful when doing wavelength
+            sweeps and solving for the group velocity.  The
+            function provided could be a Sellmeier equation.
+            Default is air.
+        film_thickness (float, str): The thickness of the
+            film the waveguide is on.  If the waveguide
+            is a true ridge (fully etched), then the film thickness
+            can be set to 'wg_height', otherwise the waveguide
+            is a rib waveguide, and a float should be given
+            specifying the thickness of the film.
+
+    '''
     def __init__(self, wavelength, x_step, y_step, wg_height, wg_width, sub_height, sub_width,
                  clad_height, n_sub, n_wg, angle=0, n_clad=mat.Air().n(),
                  film_thickness='wg_height'):

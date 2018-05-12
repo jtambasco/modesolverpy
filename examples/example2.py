@@ -36,6 +36,6 @@ solver = ms.ModeSolverFullyVectorial(8)
 solver.solve(struct_ani)
 solver.write_modes_to_file()
 
-solver.solve_ng(struct_ani, 1.55, 0.01)
+solver.solve_ng(struct_ani, 0.01)
 
 solver.solve_sweep_wavelength(struct_ani, np.linspace(1.501, 1.60, 21))

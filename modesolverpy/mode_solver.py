@@ -37,10 +37,39 @@ class _ModeSolver(metaclass=abc.ABCMeta):
         pass
 
     def solve(self, structure):
+        '''
+        Find the modes of a given structure.
+
+        Args:
+            structure (Structure): The target structure to solve
+                for modes.
+
+        Returns:
+            dict: The 'n_effs' key gives the effective indices
+            of the modes.  The 'modes' key exists of mode
+            profiles were solved for; in this case, it will
+            return arrays of the mode profiles.
+        '''
         return self._solve(structure, structure._wl)
 
     def solve_sweep_structure(self, structures, sweep_param_list,
                               filename='structure_n_effs.dat', plot=True):
+        '''
+        Find the modes of many structures.
+
+        Args:
+            structures (list): A list of `Structures` to find the modes
+                of.
+            sweep_param_list (list): A list of the parameter-sweep sweep
+                that was used.  This is for plotting purposes only.
+            filename (str): The nominal filename to use when saving the
+                effective indices.  Defaults to 'structure_n_effs.dat'.
+            plot (bool): `True` if plots should be generates,
+                otherwise `False`.  Default is `True`.
+
+        Returns:
+            list: A list of the effective indices found for each structure.
+        '''
         n_effs = []
         for s in tqdm.tqdm(structures, ncols=70):
             self.solve(s)
@@ -59,6 +88,23 @@ class _ModeSolver(metaclass=abc.ABCMeta):
 
     def solve_sweep_wavelength(self, structure, wavelengths, filename='wavelength_n_effs.dat',
                                plot=True):
+        '''
+        Solve for the effective indices of a fixed structure at
+        different wavelengths.
+
+        Args:
+            structure (Slabs): The target structure to solve
+                for modes.
+            wavelengths (list): A list of wavelengths to sweep
+                over.
+            filename (str): The nominal filename to use when saving the
+                effective indices.  Defaults to 'wavelength_n_effs.dat'.
+            plot (bool): `True` if plots should be generates,
+                otherwise `False`.  Default is `True`.
+
+        Returns:
+            list: A list of the effective indices found for each wavelength.
+        '''
         n_effs = []
         for w in tqdm.tqdm(wavelengths, ncols=70):
             structure.change_wavelength(w)
@@ -76,21 +122,40 @@ class _ModeSolver(metaclass=abc.ABCMeta):
 
         return n_effs
 
-    def solve_ng(self, structure, wavelength, wavelength_step=0.01, filename='ng.dat'):
+    def solve_ng(self, structure, wavelength_step=0.01, filename='ng.dat'):
+        '''
+        Solve for the group index, :math:`n_g`, of a structure at a particular
+        wavelength.
+
+        Args:
+            structure (Structure): The target structure to solve
+                for modes.
+            wavelength_step (float): The step to take below and
+                above the nominal wavelength.  This is used for
+                approximating the gradient of :math:`n_\mathrm{eff}`
+                at the nominal wavelength.  Default is 0.01.
+            filename (str): The nominal filename to use when saving the
+                effective indices.  Defaults to 'wavelength_n_effs.dat'.
+
+        Returns:
+            list: A list of the group indices found for each mode.
+        '''
+        wl_nom = structure._wl
+
         self.solve(structure)
         n_ctrs = self.n_effs
 
-        structure.change_wavelength(wavelength-wavelength_step)
+        structure.change_wavelength(wl_nom-wavelength_step)
         self.solve(structure)
         n_bcks = self.n_effs
 
-        structure.change_wavelength(wavelength+wavelength_step)
+        structure.change_wavelength(wl_nom+wavelength_step)
         self.solve(structure)
         n_frws = self.n_effs
 
         n_gs = []
         for n_ctr, n_bck, n_frw in zip(n_ctrs, n_bcks, n_frws):
-            n_gs.append(n_ctr - wavelength*(n_frw-n_bck)/(2*wavelength_step))
+            n_gs.append(n_ctr - wl_nom*(n_frw-n_bck)/(2*wavelength_step))
 
         if filename:
             with open(self._modes_directory+filename, 'w') as fs:
@@ -186,7 +251,30 @@ class _ModeSolver(metaclass=abc.ABCMeta):
         return args
 
 class ModeSolverSemiVectorial(_ModeSolver):
-    def __init__(self, n_eigs, tol=0., boundary='0000',
+    '''
+    A semi-vectorial mode solver object used to
+    setup and run a mode solving simulation.
+
+    Args:
+        n_eigs (int): The number of eigen-values to solve for.
+        tol (float): The precision of the eigen-value/eigen-vector
+            solver.  Default is 0.001.
+        boundary (str): The boundary conditions to use.
+            This is a string that identifies the type of boundary conditions applied.
+            The following options are available: 'A' - Hx is antisymmetric, Hy is symmetric,
+            'S' - Hx is symmetric and, Hy is antisymmetric, and '0' - Hx and Hy are zero
+            immediately outside of the boundary.
+            The string identifies all four boundary conditions, in the order:
+            North, south, east, west. For example, boundary='000A'. Default is '0000'.
+        mode_profiles (bool): `True if the the mode-profiles should be found, `False`
+            if only the effective indices should be found.
+        initial_mode_guess (list): An initial mode guess for the modesolver.
+        semi_vectorial_method (str): Either 'Ex' or 'Ey'.  If 'Ex', the mode solver
+            will only find TE modes (horizontally polarised to the simulation window),
+            if 'Ey', the mode solver will find TM modes (vertically polarised to the
+            simulation window).
+    '''
+    def __init__(self, n_eigs, tol=0.001, boundary='0000',
                  mode_profiles=True, initial_mode_guess=None,
                  semi_vectorial_method='Ex'):
         self._semi_vectorial_method = semi_vectorial_method
@@ -215,6 +303,26 @@ class ModeSolverSemiVectorial(_ModeSolver):
         return r
 
     def write_modes_to_file(self, filename='mode.dat', plot=True, analyse=True):
+        '''
+        Writes the mode fields to a file and optionally plots them.
+
+        Args:
+            filename (str): The nominal filename to use for the saved
+                data.  The suffix will be automatically be changed to
+                identifiy each mode number.  Default is 'mode.dat'
+            plot (bool): `True` if plots should be generates,
+                otherwise `False`.  Default is `True`.
+            analyse (bool): `True` if an analysis on the fundamental
+                mode should be performed.  The analysis adds to the
+                plot of the fundamental mode the power mode-field
+                diameter (MFD) and marks it on the output, and it
+                marks with a cross the maximum E-field value.
+                Default is `True`.
+
+        Returns:
+            dict: A dictionary containing the effective indices
+            and mode field profiles (if solved for).
+        '''
         modes_directory = './modes_semi_vec/'
         if not os.path.isdir(modes_directory):
             os.mkdir(modes_directory)
@@ -242,6 +350,24 @@ class ModeSolverSemiVectorial(_ModeSolver):
         return self.modes
 
 class ModeSolverFullyVectorial(_ModeSolver):
+    '''
+    A fully-vectorial mode solver object used to
+    setup and run a mode solving simulation.
+
+    Args:
+        n_eigs (int): The number of eigen-values to solve for.
+        tol (float): The precision of the eigen-value/eigen-vector
+            solver.  Default is 0.001.
+        boundary (str): The boundary conditions to use.
+            This is a string that identifies the type of boundary conditions applied.
+            The following options are available: 'A' - Hx is antisymmetric, Hy is symmetric,
+            'S' - Hx is symmetric and, Hy is antisymmetric, and '0' - Hx and Hy are zero
+            immediately outside of the boundary.
+            The string identifies all four boundary conditions, in the order:
+            North, south, east, west. For example, boundary='000A'. Default is '0000'.
+        initial_mode_guess (list): An initial mode guess for the modesolver.
+        initial_n_eff_guess (list): An initial effective index guess for the modesolver.
+    '''
     def __init__(self, n_eigs, tol=0.001, boundary='0000',
                  initial_mode_guess=None, n_eff_guess=None):
         _ModeSolver.__init__(self, n_eigs, tol, boundary,
@@ -296,7 +422,27 @@ class ModeSolverFullyVectorial(_ModeSolver):
         return mode_areas
 
     def write_modes_to_file(self, filename='mode.dat', plot=True,
-                             fields_to_write=('Ex', 'Ey', 'Ez', 'Hx', 'Hy', 'Hz')):
+                            fields_to_write=('Ex', 'Ey', 'Ez', 'Hx', 'Hy', 'Hz')):
+        '''
+        Writes the mode fields to a file and optionally plots them.
+
+        Args:
+            filename (str): The nominal filename to use for the saved
+                data.  The suffix will be automatically be changed to
+                identifiy each field and mode number.  Default is
+                'mode.dat'
+            plot (bool): `True` if plots should be generates,
+                otherwise `False`.  Default is `True`.
+            fields_to_write (tuple): A tuple of strings where the
+                strings can be 'Ex', 'Ey', 'Ez', 'Hx', 'Hy' and 'Hz'
+                defining what part of the mode should be saved and
+                plotted.  By default, all six components are written
+                and plotted.
+
+        Returns:
+            dict: A dictionary containing the effective indices
+            and mode field profiles (if solved for).
+        '''
         modes_directory = self._modes_directory
 
         # Mode info file.
