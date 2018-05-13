@@ -123,7 +123,7 @@ class _ModeSolver(metaclass=abc.ABCMeta):
         return n_effs
 
     def solve_ng(self, structure, wavelength_step=0.01, filename='ng.dat'):
-        '''
+        r'''
         Solve for the group index, :math:`n_g`, of a structure at a particular
         wavelength.
 

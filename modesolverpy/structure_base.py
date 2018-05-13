@@ -268,9 +268,12 @@ class Slabs(_AbstractStructure):
     maximum height of the desired simulation window),
     and is as wide as the simulation window.
 
-    `Slabs` objects can be index using `[]` to return
+    `Slabs` objects can be index using `[name]` to return
     the various `_Slab` objects.  The bottom slab is
     returned first and so on up to the top slab.
+
+    .. image:: images/slabs.svg
+        :width: 200%
 
     Args:
         wavelength (float): The wavelength the structure
@@ -282,9 +285,9 @@ class Slabs(_AbstractStructure):
 
     Attributes:
         slabs (dict): The key is the name of the slab,
-        and the value is the `_Slab` object.
+            and the value is the `_Slab` object.
         slab_count (int): The number of `_Slab` objects
-        added so far.
+            added so far.
     '''
     def __init__(self, wavelength, y_step, x_step, x_max, x_min=0.):
         _AbstractStructure.__init__(self)
@@ -302,7 +305,7 @@ class Slabs(_AbstractStructure):
 
     def add_slab(self, height, n_background=1.):
         '''
-        Creates and adds `_Slab` object.
+        Creates and adds a `_Slab` object.
 
         Args:
             height (float): Height of the slab.

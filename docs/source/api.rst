@@ -53,7 +53,7 @@ Structure Creation
 Slab
 ####
 
-.. automodule:: modesolverpy.structure_base
+.. autoclass:: modesolverpy.structure_base._Slab
    :members:
    :undoc-members:
    :inherited-members:
