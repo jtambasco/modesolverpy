@@ -216,3 +216,5 @@ If you add functionality, please send me a pull request.
 
 ## Acknowledgments
 This finite difference mode solver is based on a modified version of [EMpy](https://github.com/lbolla/EMpy).
+
+Thank you to [Inna Krasnokutska](https://github.com/ikrasnokutska) for testing.
