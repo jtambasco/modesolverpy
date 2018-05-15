@@ -263,16 +263,16 @@ class Slabs(_AbstractStructure):
     Class to implement device refractive index
     profile cross-section designs.
 
-    `Slabs` is a collection of `_Slab` objects.  Each
+    :class:`Slabs` is a collection of :class:`_Slab` objects.  Each
     slab has a fixed height (usually less than the
     maximum height of the desired simulation window),
     and is as wide as the simulation window.
 
-    `Slabs` objects can be index using `[name]` to return
-    the various `_Slab` objects.  The bottom slab is
+    :class:`Slabs` objects can be index using `[name]` to return
+    the various :class:`_Slab` objects.  The bottom slab is
     returned first and so on up to the top slab.
 
-    .. image:: images/slabs.svg
+    .. image:: ../images/slabs.svg
         :width: 200%
 
     Args:
@@ -285,8 +285,8 @@ class Slabs(_AbstractStructure):
 
     Attributes:
         slabs (dict): The key is the name of the slab,
-            and the value is the `_Slab` object.
-        slab_count (int): The number of `_Slab` objects
+            and the value is the :class:`_Slab` object.
+        slab_count (int): The number of :class:`_Slab` objects
             added so far.
     '''
     def __init__(self, wavelength, y_step, x_step, x_max, x_min=0.):
@@ -305,7 +305,7 @@ class Slabs(_AbstractStructure):
 
     def add_slab(self, height, n_background=1.):
         '''
-        Creates and adds a `_Slab` object.
+        Creates and adds a :class:`_Slab` object.
 
         Args:
             height (float): Height of the slab.
@@ -379,12 +379,12 @@ class Slabs(_AbstractStructure):
 
 class _Slab(Structure):
     '''
-    A `_Slab` represents a horizontal slice of
+    A :class:`_Slab` represents a horizontal slice of
     the refractive index profile.
 
-    A `Slabs` object composes many `_Slab` objects.
-    The more `_Slab` are added, the more horizontal
-    slices are added.  A `_Slab` has a chosen fixed
+    A :class:`Slabs` object composes many :class:`_Slab` objects.
+    The more :class:`_Slab` are added, the more horizontal
+    slices are added.  A :class:`_Slab` has a chosen fixed
     height, and a background (nominal) refractive
     index.  A slab can then be customised to include
     a desired design.
@@ -403,9 +403,9 @@ class _Slab(Structure):
             operates at.
 
     Attributes:
-        name (str): The name of the `_Slab` object.
+        name (str): The name of the :class:`_Slab` object.
         position (int): A unique identifier for the
-        `_Slab` object.
+        :class:`_Slab` object.
     '''
     position = 0
 

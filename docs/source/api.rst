@@ -5,106 +5,43 @@ API documentation
 Mode Solvers
 ************
 
-Semi-Vectorial Mode Solver
-##########################
+.. automodapi:: modesolverpy.mode_solver
 
-.. autoclass:: modesolverpy.mode_solver.ModeSolverSemiVectorial
-   :members:
-   :undoc-members:
-   :inherited-members:
-   :show-inheritance:
-
-Fully-Vectorial Mode Solver
-###########################
-
-.. autoclass:: modesolverpy.mode_solver.ModeSolverFullyVectorial
-   :members:
-   :undoc-members:
-   :inherited-members:
-   :show-inheritance:
-
+    :inherited-members:
+    :no-heading:
 
 **********************
 Pre-defined Structures
 **********************
 
-Ridge Waveguide
-###############
+.. automodapi:: modesolverpy.structure
 
-.. autoclass:: modesolverpy.structure.RidgeWaveguide
-   :members:
-   :undoc-members:
-   :inherited-members:
-   :show-inheritance:
-
-Waveguide Array
-###############
-
-.. autoclass:: modesolverpy.structure.WgArray
-   :members:
-   :undoc-members:
-   :inherited-members:
-   :show-inheritance:
+    :inherited-members:
+    :no-heading:
 
 ******************
 Structure Creation
 ******************
 
-Slab
-####
+.. automodapi:: modesolverpy.structure_base
 
-.. autoclass:: modesolverpy.structure_base._Slab
-   :members:
-   :undoc-members:
-   :inherited-members:
-   :show-inheritance:
-
-Slabs
-#####
-
-.. autoclass:: modesolverpy.structure_base.Slabs
-   :members:
-   :undoc-members:
-   :inherited-members:
-   :show-inheritance:
-
-Structure
-#########
-
-.. autoclass:: modesolverpy.structure_base.Structure
-   :members:
-   :undoc-members:
-   :inherited-members:
-   :show-inheritance:
-
-
-Anisotropic Structure
-#####################
-
-.. autoclass:: modesolverpy.structure_base.StructureAni
-   :members:
-   :undoc-members:
-   :inherited-members:
-   :show-inheritance:
+    :inherited-members:
+    :no-heading:
 
 ************
 Design Tools
 ************
 
-Device Design
-#############
+.. automodapi:: modesolverpy.design
 
-.. automodule:: modesolverpy.design
-   :members:
-   :undoc-members:
-   :inherited-members:
-   :show-inheritance:
+    :inherited-members:
+    :no-heading:
 
+*******************
 Coupling Efficiency
-###################
+*******************
 
-.. automodule:: modesolverpy.coupling_efficiency
-   :members:
-   :undoc-members:
-   :inherited-members:
-   :show-inheritance:
+.. automodapi:: modesolverpy.coupling_efficiency
+
+    :inherited-members:
+    :no-heading:
