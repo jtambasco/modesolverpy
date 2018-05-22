@@ -16,11 +16,10 @@ def _make_gaussian(x_pts, y_pts, mfd, x_offset=0, y_offset=0):
     return gaus_2d
 
 def _overlap(mode, gaussian):
-    gaus_sqrt = np.sqrt(gaussian)
-    mode_norm = mode / np.sum(mode)
-    np.savetxt('gaus.dat', gaussian)
-    np.savetxt('gaus_sqrt.dat', gaus_sqrt)
-    eta = np.sum(mode_norm*gaus_sqrt)**2 / (np.sum(mode_norm**2) * np.sum(gaus_sqrt**2))
+    mode_1 = mode
+    mode_2 = np.sqrt(gaussian) # square-root for E-field (not power)
+    eta = np.abs(np.sum(np.conj(mode_1)*mode_2))**2 / \
+        (np.sum(np.abs(mode_1)**2) * np.sum(np.abs(mode_2)**2))
     return eta
 
 def reflection(n1, n2):
