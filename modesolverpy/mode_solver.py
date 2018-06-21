@@ -27,10 +27,9 @@ class _ModeSolver(metaclass=abc.ABCMeta):
 
         self._path = os.path.dirname(sys.modules[__name__].__file__) + '/'
 
-        modes_directory = './modes_full_vec/'
-        if not os.path.exists(modes_directory):
-            os.mkdir(modes_directory)
-        self._modes_directory = modes_directory
+    @abc.abstractproperty
+    def _modes_directory(self):
+        pass
 
     @abc.abstractmethod
     def _solve(self, structure, wavelength):
@@ -281,6 +280,14 @@ class ModeSolverSemiVectorial(_ModeSolver):
         _ModeSolver.__init__(self, n_eigs, tol, boundary,
                              mode_profiles, initial_mode_guess)
 
+    @property
+    def _modes_directory(self):
+        modes_directory = './modes_semi_vec/'
+        if not os.path.exists(modes_directory):
+            os.mkdir(modes_directory)
+        _modes_directory = modes_directory
+        return _modes_directory
+
     def _solve(self, structure, wavelength):
         self._structure = structure
         self._ms = ms._ModeSolverSemiVectorial(wavelength,
@@ -373,6 +380,14 @@ class ModeSolverFullyVectorial(_ModeSolver):
         _ModeSolver.__init__(self, n_eigs, tol, boundary,
                              False, initial_mode_guess,
                              n_eff_guess)
+
+    @property
+    def _modes_directory(self):
+        modes_directory = './modes_full_vec/'
+        if not os.path.exists(modes_directory):
+            os.mkdir(modes_directory)
+        _modes_directory = modes_directory
+        return _modes_directory
 
     def _solve(self, structure, wavelength):
         self._structure = structure
