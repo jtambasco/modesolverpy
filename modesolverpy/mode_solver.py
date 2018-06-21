@@ -377,6 +377,8 @@ class ModeSolverFullyVectorial(_ModeSolver):
     '''
     def __init__(self, n_eigs, tol=0.001, boundary='0000',
                  initial_mode_guess=None, n_eff_guess=None):
+        self.n_effs_te = None
+        self.n_effs_tm = None
         _ModeSolver.__init__(self, n_eigs, tol, boundary,
                              False, initial_mode_guess,
                              n_eff_guess)
@@ -406,6 +408,8 @@ class ModeSolverFullyVectorial(_ModeSolver):
 
         self._initial_mode_guess = None
 
+        self.n_effs_te, self.n_effs_tm = self._sort_neffs(self._ms.neff)
+
         return r
 
     def _get_mode_types(self):
@@ -415,6 +419,20 @@ class ModeSolverFullyVectorial(_ModeSolver):
             idx = np.argmax(overlap[0:3])
             mode_types.append((labels[idx], np.round(overlap[idx],2)))
         return mode_types
+
+    def _sort_neffs(self, n_effs):
+        mode_types = self._get_mode_types()
+
+        n_effs_te = []
+        n_effs_tm = []
+
+        for mt, n_eff in zip(mode_types, n_effs):
+            if mt[0] == 'qTE':
+                n_effs_te.append(n_eff)
+            elif mt[0] == 'qTM':
+                n_effs_tm.append(n_eff)
+
+        return n_effs_te, n_effs_tm
 
     def _get_overlaps(self, fields):
         mode_areas = []
