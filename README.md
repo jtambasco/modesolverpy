@@ -20,18 +20,20 @@ yaourt -S python-modesolverpy
 ### Dependencies
 If installing using the [Arch Linux AUR package](https://aur.archlinux.org/packages/python-modesolverpy/) or `pip`, dependencies will be automatically downloaded and installed, if not, one should ensure the following dependencies are installed:
 
-#### Python
+Either Gnuplot or Matplotlib can be used for plotting; I am a Gnuplot user to the code was written with it in mind.  If both Gnuplot and Matplotlib are installed, the code will default to Gnuplot.
 
 * [setuptools](https://pypi.python.org/pypi/setuptools),
 * [numpy](http://www.numpy.org/),
 * [scipy](https://www.scipy.org/),
-* [tqdm](https://pypi.python.org/pypi/tqdm),
-* [gnuplotpy](https://github.com/jtambasco/gnuplotpy), and
+* [tqdm](https://pypi.python.org/pypi/tqdm), and
 * [opticalmaterialspy](https://github.com/jtambasco/opticalmaterialspy).
 
-#### Other
-
-* [Gnuplot](http://www.gnuplot.info/).
+#### Plotting
+EITHER:
+    * [Gnuplot](http://www.gnuplot.info/).
+    * [gnuplotpy](https://github.com/jtambasco/gnuplotpy),
+OR:
+    * [matplotlib](https://matplotlib.org/),
 
 ## Features
 The main reasons to consider this library include:

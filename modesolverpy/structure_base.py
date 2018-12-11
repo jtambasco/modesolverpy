@@ -1,9 +1,18 @@
 import numpy as np
 from scipy import interpolate
-import gnuplotpy as gp
 import os
 import sys
+import subprocess
 import abc
+
+try:
+    subprocess.call(['gnuplot'])
+    import gnuplotpy as gp
+    aa
+    MPL = False
+except:
+    import matplotlib.pylab as plt
+    MPL = True
 
 class _AbstractStructure(metaclass=abc.ABCMeta):
     @abc.abstractproperty
@@ -237,7 +246,20 @@ class _AbstractStructure(metaclass=abc.ABCMeta):
                 'filename_data': filename,
                 'filename_image': filename_image
             }
-            gp.gnuplot(path+'structure.gpi', args)
+
+            if MPL:
+                heatmap = np.loadtxt(args['filename_data'], delimiter=',')
+                plt.clf()
+                plt.title(args['title'])
+                plt.xlabel('$x$')
+                plt.ylabel('$y$')
+                plt.imshow(np.flipud(heatmap),
+                           extent=(args['x_min'], args['x_max'], args['y_min'], args['y_max']),
+                           aspect="auto")
+                plt.colorbar()
+                plt.savefig(filename_image)
+            else:
+                gp.gnuplot(path+'structure.gpi', args)
 
     def __str__(self):
         return self.n.__str__()
@@ -647,7 +669,19 @@ class StructureAni():
                     'filename_data': fn,
                     'filename_image': filename_image
                 }
-                gp.gnuplot(path+'structure.gpi', args, silent=False)
+                if MPL:
+                    heatmap = np.loadtxt(args['filename_data'], delimiter=',')
+                    plt.clf()
+                    plt.title(args['title'])
+                    plt.xlabel('$x$')
+                    plt.ylabel('$y$')
+                    plt.imshow(np.flipud(heatmap),
+                               extent=(args['x_min'], args['x_max'], args['y_min'], args['y_max']),
+                               aspect="auto")
+                    plt.colorbar()
+                    plt.savefig(filename_image)
+                else:
+                    gp.gnuplot(path+'structure.gpi', args, silent=False)
 
     def change_wavelength(self, wavelength):
         '''
