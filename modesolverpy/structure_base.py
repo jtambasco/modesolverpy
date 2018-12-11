@@ -8,7 +8,6 @@ import abc
 try:
     subprocess.call(['gnuplot'])
     import gnuplotpy as gp
-    aa
     MPL = False
 except:
     import matplotlib.pylab as plt
