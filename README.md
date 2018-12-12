@@ -219,8 +219,8 @@ Mode types:
 ## Example 3: Grating-coupler period
 Analytic calculation of the grating coupler period for various duty-cycles in SOI.
 
-Seems to match well with the periods in [Taillaert et al., Grating Couplers for
-Coupling between Optical Fibers and Nanophotonic Waveguides, IOP Science, 2006](http://iopscience.iop.org/article/10.1143/JJAP.45.6071/meta).
+Seems to match well with the periods in [Taillaert et al., _Grating Couplers for
+Coupling between Optical Fibers and Nanophotonic Waveguides_, IOP Science, 2006](http://iopscience.iop.org/article/10.1143/JJAP.45.6071/meta).
 
 ```python
 import modesolverpy.mode_solver as ms
