@@ -47,9 +47,7 @@ The main reasons to consider this library include:
 * some limited (at this stage) data processing (finding MFD of fundamental mode), and
 * easily extensible library.
 
-## Example 1
-
-### Semi-vectorial mode solving of a ridge waveguide
+## Example 1: Semi-vectorial mode solving of a ridge waveguide
 The following example finds the first two modes of a waveguide with the following, arbitrary, parameters:
 
 * thin-film thickness: 500nm
@@ -108,9 +106,7 @@ mode_solver.write_modes_to_file('example_modes_1.dat')
 ### Modes
 <img src="./examples/example_modes_1_Ey_0.png " width="400"> <img src="./examples/example_modes_1_Ey_1.png " width="400">
 
-## Example 2
-
-### Fully vectorial mode solving of anisotropic material
+## Example 2: Fully vectorial mode solving of anisotropic material
 The following looks at a contrived ridge waveguide in Z-cut KTP.
 
 The simulation outputs:
@@ -220,8 +216,11 @@ Mode types:
 ### Wavelength Sweep
 <img src="./examples/modes_full_vec/wavelength_n_effs.png " width="400">
 
-### Grating-coupler period
+## Example 3: Grating-coupler period
 Analytic calculation of the grating coupler period for various duty-cycles in SOI.
+
+Seems to match well with the periods in [Taillaert et al., Grating Couplers for
+Coupling between Optical Fibers and Nanophotonic Waveguides, IOP Science, 2006](http://iopscience.iop.org/article/10.1143/JJAP.45.6071/meta).
 
 ```python
 import modesolverpy.mode_solver as ms
@@ -288,7 +287,46 @@ np.savetxt(filename, np.array(periods).T, delimiter=',', header=','.join([str(va
 print(np.c_[periods])
 ```
 
-<img src="./examples/gc-sweep-soi.png " width="400">
+<img src="./examples/gc-sweep-soi.png " width="600">
+
+## Example 4: Mode Hybridisation In SOI
+Simulation of mode hybridisation in 220nm thick fully-etched SOI ridge
+waveguides.
+
+Results look the same as those found in [Daoxin Dai and Ming Zhang, "Mode hybridization and conversion in silicon-on-insulator nanowires with angled sidewalls," Opt. Express 23, 32452-32464 (2015)](https://www.osapublishing.org/oe/abstract.cfm?uri=oe-23-25-32452).
+
+```python
+import modesolverpy.mode_solver as ms
+import modesolverpy.structure as st
+import opticalmaterialspy as mat
+import numpy as np
+
+wl = 1.55
+x_step = 0.02
+y_step = 0.02
+etch_depth = 0.22
+wg_widths = np.arange(0.3, 2., 0.05)
+sub_height = 1.
+sub_width = 4.
+clad_height = 1.
+film_thickness = 0.22
+
+n_sub = mat.SiO2().n(wl)
+n_clad = mat.Air().n(wl)
+n_wg = 3.476
+
+r = []
+for w in wg_widths:
+    r.append(st.RidgeWaveguide(wl, x_step, y_step, etch_depth, w,
+                               sub_height, sub_width, clad_height,
+                               n_sub, n_wg, None, n_clad, film_thickness))
+
+solver = ms.ModeSolverFullyVectorial(6)
+solver.solve_sweep_structure(r, wg_widths)
+solver.write_modes_to_file()
+```
+
+<img src="./examples/width-sweep-soi.png " width="600">
 
 ## Contributions
 If you add functionality, please send me a pull request.

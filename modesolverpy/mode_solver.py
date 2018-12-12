@@ -78,14 +78,24 @@ class _ModeSolver(metaclass=abc.ABCMeta):
             list: A list of the effective indices found for each structure.
         '''
         n_effs = []
+        mode_types = []
         for s in tqdm.tqdm(structures, ncols=70):
             self.solve(s)
             n_effs.append(np.real(self.n_effs))
+            mode_types.append(self._get_mode_types())
 
         if filename:
             self._write_n_effs_to_file(n_effs,
                                        self._modes_directory+filename,
                                        sweep_param_list)
+
+            with open(self._modes_directory+'mode_types.dat', 'w') as fs:
+                header = ','.join('Mode%i' % i for i, _ in enumerate(mode_types[0]))
+                fs.write('#'+header+'\n')
+                for mt in mode_types:
+                    txt = ','.join('%s %.2f' % pair for pair in mt)
+                    fs.write(txt+'\n')
+
             if plot:
                 if MPL:
                     title = '$n_{effs}$ vs structure'
