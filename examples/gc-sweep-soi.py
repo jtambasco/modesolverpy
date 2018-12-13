@@ -57,6 +57,6 @@ for wl in wls:
     period = de.grating_coupler_period(wl, dcs*ngc[0]+(1-dcs)*ngc[1], n_clad, 8, 1)
     periods.append(period)
 
-filename = 'dc-sweep-%s-%inm-etch-%i-film.dat' % (polarisation, etch_depth*1000, film_thickness*1000)
+filename = 'gc-sweep-%s-%inm-etch-%i-film.dat' % (polarisation, etch_depth*1000, film_thickness*1000)
 np.savetxt(filename, np.array(periods).T, delimiter=',', header=','.join([str(val) for val in wls]))
 print(np.c_[periods])
