@@ -313,6 +313,7 @@ class _ModeSolverVectorial():
         The function can either return a single float, corresponding the an isotropic refractive index,
         or, ir may a length-5 tuple. In the tuple case, the relative permittivity is given in the form
         (epsxx, epsxy, epsyx, epsyy, epszz).
+        The light is `z` propagating.
     boundary : str
         This is a string that identifies the type of boundary conditions applied.
         The following options are available:
