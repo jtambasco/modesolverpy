@@ -1,13 +1,14 @@
 set dataf sep ','
 
-set term pngcairo size 20cm,20cm
+set term pngcairo size 30cm,20cm
 set out filename_image
 
 set key below
 set grid
+set border lw 1.5
 
 set xlabel xlab
 set ylabel ylab
-set title titl
+set title titl font ',14'
 
-plot for [col=2:num_modes+1] filename_data u 1:col w lp pt 7 title sprintf('Mode %i', col-2)
+plot for [col=2:num_modes+1] filename_data u 1:col w lp lw 2 pt 7 title sprintf('Mode %i', col-2)

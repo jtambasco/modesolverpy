@@ -60,7 +60,8 @@ class _ModeSolver(metaclass=abc.ABCMeta):
         return self._solve(structure, structure._wl)
 
     def solve_sweep_structure(self, structures, sweep_param_list,
-                              filename='structure_n_effs.dat', plot=True):
+                              filename='structure_n_effs.dat', plot=True,
+                              x_label='Structure number'):
         '''
         Find the modes of many structures.
 
@@ -98,11 +99,11 @@ class _ModeSolver(metaclass=abc.ABCMeta):
 
             if plot:
                 if MPL:
-                    title = '$n_{effs}$ vs structure'
+                    title = '$n_{effs}$ vs %s' % x_label
                 else:
-                    title = 'n_{effs} vs structure'
+                    title = 'n_{effs} vs %s' % x_label
                 self._plot_n_effs(self._modes_directory+filename,
-                                  'Structure number',
+                                  x_label,
                                   title)
 
         return n_effs
