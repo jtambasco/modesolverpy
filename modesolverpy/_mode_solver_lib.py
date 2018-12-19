@@ -360,7 +360,7 @@ class _ModeSolverVectorial():
         if isinstance(tmp, tuple):
             tmp = [numpy.c_[t[:, 0:1], t, t[:, -1:]] for t in tmp]
             tmp = [numpy.r_[t[0:1, :], t, t[-1:, :]] for t in tmp]
-            epsxx, epsxy, epsyx, epsyy, epszz = tmp
+            epsyy, epsyx, epsxy, epsxx, epszz = tmp
         else:
             tmp = numpy.c_[tmp[:, 0:1], tmp, tmp[:, -1:]]
             tmp = numpy.r_[tmp[0:1, :], tmp, tmp[-1:, :]]
