@@ -6,7 +6,8 @@ import subprocess
 import abc
 
 try:
-    subprocess.call(['gnuplot'])
+    devnull = open(os.devnull, 'w')
+    subprocess.call(['gnuplot', '--version'], stdout=devnull, stderr=devnull)
     import gnuplotpy as gp
     MPL = False
 except:
@@ -514,8 +515,8 @@ class StructureAni():
     """
     def __init__(self, structure_xx, structure_yy, structure_zz,
                  structure_xy=None, structure_yx=None):
-        self.xx = structure_yy
-        self.yy = structure_xx
+        self.xx = structure_xx
+        self.yy = structure_yy
         self.zz = structure_zz
 
         if not structure_xy or not structure_yx:

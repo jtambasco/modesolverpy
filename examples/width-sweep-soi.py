@@ -24,5 +24,5 @@ for w in wg_widths:
                                n_sub, n_wg, None, n_clad, film_thickness))
 
 solver = ms.ModeSolverFullyVectorial(6)
-solver.solve_sweep_structure(r, wg_widths)
+solver.solve_sweep_structure(r, wg_widths, x_label='Taper width [um]')
 solver.write_modes_to_file()

@@ -101,10 +101,10 @@ mode_solver.write_modes_to_file('example_modes_1.dat')
 ```
 
 #### Structure
-<img src="./examples/example_structure_1.png " width="400">
+<img src="./examples/modes_semi_vec_ex1/example_structure_1.png " width="400">
 
 ### Modes
-<img src="./examples/example_modes_1_Ey_0.png " width="400"> <img src="./examples/example_modes_1_Ey_1.png " width="400">
+<img src="./examples/modes_semi_vec_ex1/example_modes_1_Ey_0.png " width="400"> <img src="./examples/modes_semi_vec_ex1/example_modes_1_Ey_1.png " width="400">
 
 ## Example 2: Fully vectorial mode solving of anisotropic material
 The following looks at a contrived ridge waveguide in Z-cut KTP.
@@ -187,8 +187,8 @@ The group velocity at 1550nm for each mode is:
 ```
 
 ### Structure
-<img src="./examples/material_index/material_index_xx.png " width="250"> <img src="./examples/material_index/material_index_xy.png " width="250"> <img src="./examples/material_index/material_index_yx.png " width="250">
-<img src="./examples/material_index/material_index_yy.png " width="250"> <img src="./examples/material_index/material_index_zz.png " width="250">
+<img src="./examples/modes_full_vec_ex2/material_index/material_index_xx.png " width="250"> <img src="./examples/modes_full_vec_ex2/material_index/material_index_xy.png " width="250"> <img src="./examples/modes_full_vec_ex2/material_index/material_index_yx.png " width="250">
+<img src="./examples/modes_full_vec_ex2/material_index/material_index_yy.png " width="250"> <img src="./examples/modes_full_vec_ex2/material_index/material_index_zz.png " width="250">
 
 ### Modes
 Only the first 4 (out of 8) modes are shown, and only the E-fields are shown (not H-fields).  For the rest of the images, look in the example folder or run the script.
@@ -208,13 +208,13 @@ Mode types:
 6,qTE,89.47,1.447
 7,qTM,68.35,1.437
 ```
-<img src="./examples/modes_full_vec/mode_0/mode_Ex_0.png " width="265"> <img src="./examples/modes_full_vec/mode_0/mode_Ey_0.png " width="265"> <img src="./examples/modes_full_vec/mode_0/mode_Ez_0.png " width="265">
-<img src="./examples/modes_full_vec/mode_1/mode_Ex_1.png " width="265"> <img src="./examples/modes_full_vec/mode_1/mode_Ey_1.png " width="265"> <img src="./examples/modes_full_vec/mode_1/mode_Ez_1.png " width="265">
-<img src="./examples/modes_full_vec/mode_2/mode_Ex_2.png " width="265"> <img src="./examples/modes_full_vec/mode_2/mode_Ey_2.png " width="265"> <img src="./examples/modes_full_vec/mode_2/mode_Ez_2.png " width="265">
-<img src="./examples/modes_full_vec/mode_3/mode_Ex_3.png " width="265"> <img src="./examples/modes_full_vec/mode_3/mode_Ey_3.png " width="265"> <img src="./examples/modes_full_vec/mode_3/mode_Ez_3.png " width="265">
+<img src="./examples/modes_full_vec_ex2/mode_0/mode_Ex_0.png " width="265"> <img src="./examples/modes_full_vec_ex2/mode_0/mode_Ey_0.png " width="265"> <img src="./examples/modes_full_vec_ex2/mode_0/mode_Ez_0.png " width="265">
+<img src="./examples/modes_full_vec_ex2/mode_1/mode_Ex_1.png " width="265"> <img src="./examples/modes_full_vec_ex2/mode_1/mode_Ey_1.png " width="265"> <img src="./examples/modes_full_vec_ex2/mode_1/mode_Ez_1.png " width="265">
+<img src="./examples/modes_full_vec_ex2/mode_2/mode_Ex_2.png " width="265"> <img src="./examples/modes_full_vec_ex2/mode_2/mode_Ey_2.png " width="265"> <img src="./examples/modes_full_vec_ex2/mode_2/mode_Ez_2.png " width="265">
+<img src="./examples/modes_full_vec_ex2/mode_3/mode_Ex_3.png " width="265"> <img src="./examples/modes_full_vec_ex2/mode_3/mode_Ey_3.png " width="265"> <img src="./examples/modes_full_vec_ex2/mode_3/mode_Ez_3.png " width="265">
 
 ### Wavelength Sweep
-<img src="./examples/modes_full_vec/wavelength_n_effs.png " width="400">
+<img src="./examples/modes_full_vec_ex2/wavelength_n_effs.png " width="400">
 
 ## Example 3: Grating-coupler period
 Analytic calculation of the grating coupler period for various duty-cycles in SOI.
