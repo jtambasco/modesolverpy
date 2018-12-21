@@ -526,14 +526,14 @@ class StructureAni():
             struct_dummy._wl = self.xx._wl
 
         if structure_xy:
-            self.yx = structure_xy
-        else:
-            self.yx = struct_dummy
-
-        if structure_yx:
-            self.xy = structure_yx
+            self.xy = structure_xy
         else:
             self.xy = struct_dummy
+
+        if structure_yx:
+            self.yx = structure_yx
+        else:
+            self.yx = struct_dummy
 
         assert self.xx._wl == self.xy._wl == self.yx._wl == \
                self.yy._wl == self.zz._wl
