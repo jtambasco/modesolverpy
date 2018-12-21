@@ -163,19 +163,23 @@ class _AbstractStructure(metaclass=abc.ABCMeta):
                               x_top_right, x_bot_left, n_material):
         angle = np.radians(angle)
         trap_len = (y_top_right - y_bot_left) / np.tan(angle)
-        num_x_iterations = round(trap_len/self.x_step)
-        y_per_iteration = round(self.y_pts / num_x_iterations)
+        num_x_iterations = trap_len / self.x_step
+        y_per_iteration =  num_x_iterations / self.y_pts
 
         lhs_x_start_index = int(x_bot_left/ self.x_step + 0.5)
         rhs_x_stop_index = int(x_top_right/ self.x_step + 1 + 0.5)
 
+        running_removal_float = y_per_iteration
         for i, _ in enumerate(xy_mask):
+            if running_removal_float >= 1:
+                removal_int = int(round(running_removal_float))
+                lhs_x_start_index -= removal_int
+                rhs_x_stop_index += removal_int
+                running_removal_float -= removal_int
+            running_removal_float += y_per_iteration
+
             xy_mask[i][:lhs_x_start_index] = False
             xy_mask[i][lhs_x_start_index:rhs_x_stop_index] = True
-
-            if i % y_per_iteration == 0:
-                lhs_x_start_index -= 1
-                rhs_x_stop_index += 1
 
         self.n[xy_mask] = n_material
         return self.n
