@@ -1,0 +1,17 @@
+set dataf sep ','
+
+set term pngcairo size 30cm,20cm
+set out filename_image
+
+set key below
+set grid
+set border lw 1.5
+
+set xlabel xlab
+set ylabel ylab
+set title titl font ',14'
+
+set yrange [0:100]
+set ytics 0,25,100
+
+plot for [col in mode_list] filename_data u 1:(column(col+2)*100.) w lp lw 2 pt 7 title sprintf('Mode %s', col)

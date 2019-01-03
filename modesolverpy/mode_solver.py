@@ -62,7 +62,7 @@ class _ModeSolver(metaclass=abc.ABCMeta):
 
     def solve_sweep_structure(self, structures, sweep_param_list,
                               filename='structure_n_effs.dat', plot=True,
-                              x_label='Structure number'):
+                              x_label='Structure number', fraction_mode_list=[]):
         '''
         Find the modes of many structures.
 
@@ -105,26 +105,45 @@ class _ModeSolver(metaclass=abc.ABCMeta):
 
             with open(self._modes_directory+'fraction_te.dat', 'w') as fs:
                 header = 'fraction te'
-                fs.write('# '+header+'\n')
-                for fte in fractions_te:
-                    txt = ','.join('%.2f' % f for f in fte)
+                fs.write('# param sweep,'+header+'\n')
+                for param, fte in zip(sweep_param_list, fractions_te):
+                    txt = '%.6f,' % param
+                    txt += ','.join('%.2f' % f for f in fte)
                     fs.write(txt+'\n')
 
             with open(self._modes_directory+'fraction_tm.dat', 'w') as fs:
                 header = 'fraction tm'
-                fs.write('# '+header+'\n')
-                for ftm in fractions_tm:
-                    txt = ','.join('%.2f' % f for f in ftm)
+                fs.write('# param sweep,'+header+'\n')
+                for param, ftm in zip(sweep_param_list, fractions_tm):
+                    txt = '%.6f,' % param
+                    txt += ','.join('%.2f' % f for f in ftm)
                     fs.write(txt+'\n')
 
             if plot:
                 if MPL:
-                    title = '$n_{effs}$ vs %s' % x_label
+                    title = '$n_{eff}$ vs %s' % x_label
+                    y_label = '$n_{eff}$'
                 else:
                     title = 'n_{effs} vs %s' % x_label
+                    y_label = 'n_{eff}'
                 self._plot_n_effs(self._modes_directory+filename,
                                   x_label,
+                                  y_label,
                                   title)
+
+                title = 'TE Fraction vs %s' % x_label
+                self._plot_fraction(self._modes_directory+'fraction_te.dat',
+                                    x_label,
+                                    'TE Fraction [%]',
+                                    title,
+                                    fraction_mode_list)
+
+                title = 'TM Fraction vs %s' % x_label
+                self._plot_fraction(self._modes_directory+'fraction_tm.dat',
+                                    x_label,
+                                    'TM Fraction [%]',
+                                    title,
+                                    fraction_mode_list)
 
         return n_effs
 
@@ -159,11 +178,14 @@ class _ModeSolver(metaclass=abc.ABCMeta):
                                        wavelengths)
             if plot:
                 if MPL:
-                    title = '$n_{effs}$ vs wavelength'
+                    title = '$n_{eff}$ vs Wavelength'
+                    y_label = '$n_{eff}$'
                 else:
-                    title = 'n_{effs} vs structure'
+                    title = 'n_{effs} vs Wavelength' % x_label
+                    y_label = 'n_{eff}'
                 self._plot_n_effs(self._modes_directory+filename,
                                   'Wavelength',
+                                  'n_{eff}',
                                   title)
 
         return n_effs
@@ -235,11 +257,11 @@ class _ModeSolver(metaclass=abc.ABCMeta):
                 fs.write(e_str+'\n')
         return mode
 
-    def _plot_n_effs(self, filename_n_effs, xlabel, title):
+    def _plot_n_effs(self, filename_n_effs, xlabel, ylabel, title):
         args = {
             'titl': title,
             'xlab': xlabel,
-            'ylab': 'n_{eff}',
+            'ylab': ylabel,
             'filename_data': filename_n_effs,
             'filename_image': None,
             'num_modes': len(self.modes)
@@ -260,6 +282,39 @@ class _ModeSolver(metaclass=abc.ABCMeta):
             plt.savefig(args['filename_image'])
         else:
             gp.gnuplot(self._path+'n_effs.gpi', args, silent=False)
+            gp.trim_pad_image(filename_image)
+
+        return args
+
+    def _plot_fraction(self, filename_fraction, xlabel, ylabel, title, mode_list=[]):
+        if not mode_list:
+            mode_list = range(len(self.modes))
+        gp_mode_list = ' '.join(str(idx) for idx in mode_list)
+
+        args = {
+            'titl': title,
+            'xlab': xlabel,
+            'ylab': ylabel,
+            'filename_data': filename_fraction,
+            'filename_image': None,
+            'mode_list': gp_mode_list
+        }
+
+        filename_image_prefix, _ = os.path.splitext(filename_fraction)
+        filename_image = filename_image_prefix + '.png'
+        args['filename_image'] = filename_image
+
+        if MPL:
+            data = np.loadtxt(args['filename_data'], delimiter=',').T
+            plt.clf()
+            plt.title(title)
+            plt.xlabel(args['xlab'])
+            plt.ylabel('$'+args['ylab']+'$')
+            for i in modes:
+                plt.plot(data[0], data[i+1], '-o')
+            plt.savefig(args['filename_image'])
+        else:
+            gp.gnuplot(self._path+'fractions.gpi', args, silent=False)
             gp.trim_pad_image(filename_image)
 
         return args
