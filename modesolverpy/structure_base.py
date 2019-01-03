@@ -6,7 +6,8 @@ import subprocess
 import abc
 
 try:
-    subprocess.call(['gnuplot'])
+    devnull = open(os.devnull, 'w')
+    subprocess.call(['gnuplot', '--version'], stdout=devnull, stderr=devnull)
     import gnuplotpy as gp
     MPL = False
 except:

@@ -10,7 +10,8 @@ from . import _analyse as anal
 from . import structure_base as stb
 
 try:
-    subprocess.call(['gnuplot'])
+    devnull = open(os.devnull, 'w')
+    subprocess.call(['gnuplot', '--version'], stdout=devnull, stderr=devnull)
     import gnuplotpy as gp
     MPL = False
 except:
@@ -80,10 +81,15 @@ class _ModeSolver(metaclass=abc.ABCMeta):
         '''
         n_effs = []
         mode_types = []
+        fractions_te = []
+        fractions_tm = []
         for s in tqdm.tqdm(structures, ncols=70):
             self.solve(s)
             n_effs.append(np.real(self.n_effs))
             mode_types.append(self._get_mode_types())
+            fractions_te.append(self.fraction_te)
+            fractions_tm.append(self.fraction_tm)
+
 
         if filename:
             self._write_n_effs_to_file(n_effs,
@@ -92,9 +98,23 @@ class _ModeSolver(metaclass=abc.ABCMeta):
 
             with open(self._modes_directory+'mode_types.dat', 'w') as fs:
                 header = ','.join('Mode%i' % i for i, _ in enumerate(mode_types[0]))
-                fs.write('#'+header+'\n')
+                fs.write('# '+header+'\n')
                 for mt in mode_types:
                     txt = ','.join('%s %.2f' % pair for pair in mt)
+                    fs.write(txt+'\n')
+
+            with open(self._modes_directory+'fraction_te.dat', 'w') as fs:
+                header = 'fraction te'
+                fs.write('# '+header+'\n')
+                for fte in fractions_te:
+                    txt = ','.join('%.2f' % f for f in fte)
+                    fs.write(txt+'\n')
+
+            with open(self._modes_directory+'fraction_tm.dat', 'w') as fs:
+                header = 'fraction tm'
+                fs.write('# '+header+'\n')
+                for ftm in fractions_tm:
+                    txt = ','.join('%.2f' % f for f in ftm)
                     fs.write(txt+'\n')
 
             if plot:
@@ -470,7 +490,7 @@ class ModeSolverFullyVectorial(_ModeSolver):
         r = {'n_effs': self.n_effs}
         r['modes'] = self.modes = self._ms.modes
 
-        self.overlaps = self._get_overlaps(self.modes)
+        self.overlaps, self.fraction_te, self.fraction_tm = self._get_overlaps(self.modes)
         self.mode_types = self._get_mode_types()
 
         self._initial_mode_guess = None
@@ -503,6 +523,8 @@ class ModeSolverFullyVectorial(_ModeSolver):
 
     def _get_overlaps(self, fields):
         mode_areas = []
+        fraction_te = []
+        fraction_tm = []
         for mode in self._ms.modes:
             e_fields = (mode.fields['Ex'], mode.fields['Ey'], mode.fields['Ez'])
             h_fields = (mode.fields['Hx'], mode.fields['Hy'], mode.fields['Hz'])
@@ -515,11 +537,14 @@ class ModeSolverFullyVectorial(_ModeSolver):
             areas_h /= np.sum(areas_h)
             areas_h *= 100
 
+            fraction_te.append(areas_e[0] / (areas_e[0] + areas_e[1]))
+            fraction_tm.append(areas_e[1] / (areas_e[0] + areas_e[1]))
+
             areas = areas_e.tolist()
             areas.extend(areas_h)
             mode_areas.append(areas)
 
-        return mode_areas
+        return mode_areas, fraction_te, fraction_tm
 
     def write_modes_to_file(self, filename='mode.dat', plot=True,
                             fields_to_write=('Ex', 'Ey', 'Ez', 'Hx', 'Hy', 'Hz')):
