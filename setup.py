@@ -12,7 +12,8 @@ setup(name='modesolverpy',
           'scipy',
           'numpy',
           'gnuplotpy',
-          'opticalmaterialspy'
+          'opticalmaterialspy',
+          'matplotlib'
       ],
       packages=['modesolverpy'],
       include_package_data=True,
