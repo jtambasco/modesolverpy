@@ -1,8 +1,8 @@
 import copy
-from .structure_base import *
+from . import structure_base as sb
 import opticalmaterialspy as mat
 
-class RidgeWaveguide(Slabs):
+class RidgeWaveguide(sb.Slabs):
     '''
     A general ridge waveguide structure.
 
@@ -54,7 +54,7 @@ class RidgeWaveguide(Slabs):
     def __init__(self, wavelength, x_step, y_step, wg_height, wg_width, sub_height, sub_width,
                  clad_height, n_sub, n_wg, angle=0, n_clad=mat.Air().n(),
                  film_thickness='wg_height'):
-        Slabs.__init__(self, wavelength, y_step, x_step, sub_width)
+        sb.Slabs.__init__(self, wavelength, y_step, x_step, sub_width)
 
         self.n_sub = n_sub
         self.n_clad = n_clad
@@ -71,10 +71,10 @@ class RidgeWaveguide(Slabs):
 
         self.add_slab(clad_height, n_clad)
 
-class WgArray(Slabs):
+class WgArray(sb.Slabs):
     def __init__(self, wavelength, x_step, y_step, wg_height, wg_widths, wg_gaps, sub_height,
                  sub_width, clad_height, n_sub, n_wg, angle=0, n_clad=mat.Air().n()):
-        Slabs.__init__(self, wavelength, y_step, x_step, sub_width)
+        sb.Slabs.__init__(self, wavelength, y_step, x_step, sub_width)
 
         try:
             iter(wg_gaps)

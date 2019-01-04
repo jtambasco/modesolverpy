@@ -75,6 +75,11 @@ class _ModeSolver(metaclass=abc.ABCMeta):
                 effective indices.  Defaults to 'structure_n_effs.dat'.
             plot (bool): `True` if plots should be generates,
                 otherwise `False`.  Default is `True`.
+            x_label (str): x-axis text to display in the plot.
+            fraction_mode_list (list): A list of mode indices of the modes
+                that should be included in the TE/TM mode fraction plot.
+                If the list is empty, all modes will be included.  The list
+                is empty by default.
 
         Returns:
             list: A list of the effective indices found for each structure.
@@ -203,7 +208,7 @@ class _ModeSolver(metaclass=abc.ABCMeta):
                 approximating the gradient of :math:`n_\mathrm{eff}`
                 at the nominal wavelength.  Default is 0.01.
             filename (str): The nominal filename to use when saving the
-                effective indices.  Defaults to 'wavelength_n_effs.dat'.
+                effective indices.  Defaults to 'ng.dat'.
 
         Returns:
             list: A list of the group indices found for each mode.

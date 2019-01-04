@@ -1,5 +1,5 @@
 Introduction
 ============
 
-This documentation demonstrates the potential of modesolverpy.
+This is the documentation for the modesolverpy API.
 
