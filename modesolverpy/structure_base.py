@@ -4,6 +4,7 @@ import os
 import sys
 import subprocess
 import abc
+from six import with_metaclass
 
 try:
     devnull = open(os.devnull, 'w')
@@ -14,7 +15,7 @@ except:
     import matplotlib.pylab as plt
     MPL = True
 
-class _AbstractStructure(metaclass=abc.ABCMeta):
+class _AbstractStructure(with_metaclass(abc.ABCMeta)):
     @abc.abstractproperty
     def n(self):
         '''
