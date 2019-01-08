@@ -8,7 +8,7 @@ It is recommend to install `modesolverpy` either via:
 
 ### Ubuntu/Mint/Debian:
 ```bash
-pip3 install modesolverpy
+pip3 install modesolverpy # or pip2 install modesolverpy
 apt install gnuplot
 ```
 
