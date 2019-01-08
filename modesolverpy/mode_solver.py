@@ -23,6 +23,23 @@ except:
 
     MPL = True
 
+def use_gnuplot():
+    """
+    Use gnuplot as the plotting tool for any mode related outputs.
+    """
+    global gp
+    import gnuplotpy as gp
+    global MPL
+    MPL = False
+
+def use_matplotlib():
+    """
+    Use matplotlib as the plotting tool for any mode related outputs.
+    """
+    global plt
+    import matplotlib.pylab as plt
+    global MPL
+    MPL = True
 
 class _ModeSolver(with_metaclass(abc.ABCMeta)):
     def __init__(
@@ -318,7 +335,7 @@ class _ModeSolver(with_metaclass(abc.ABCMeta)):
             plt.clf()
             plt.title(title)
             plt.xlabel(args["xlab"])
-            plt.ylabel("$" + args["ylab"] + "$")
+            plt.ylabel(args["ylab"] + "$")
             for i in range(args["num_modes"]):
                 plt.plot(data[0], data[i + 1], "-o")
             plt.savefig(args["filename_image"])
@@ -353,8 +370,8 @@ class _ModeSolver(with_metaclass(abc.ABCMeta)):
             plt.clf()
             plt.title(title)
             plt.xlabel(args["xlab"])
-            plt.ylabel("$" + args["ylab"] + "$")
-            for i in modes:
+            plt.ylabel(args["ylab"])
+            for i, _ in enumerate(self.modes):
                 plt.plot(data[0], data[i + 1], "-o")
             plt.savefig(args["filename_image"])
         else:
@@ -394,7 +411,7 @@ class _ModeSolver(with_metaclass(abc.ABCMeta)):
                 title += r", $\lambda = %s " % "{:.3f} \mu$m".format(wavelength)
         if area:
             if MPL:
-                title += ", $A_%s$: " % field_name[1] + "{:.1f}\%".format(area)
+                title += ", $A_%s$: " % field_name[1] + "{:.1f}%".format(area)
             else:
                 title += ", A_%s: " % field_name[1] + "{:.1f}\%".format(area)
 

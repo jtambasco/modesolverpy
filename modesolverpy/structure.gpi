@@ -20,7 +20,5 @@ set ylabel 'y'
 set xrange [0:x_max]
 set yrange [0:y_max]
 
-set pm3d interpolate 4,4
-
 splot filename_data matrix u ((x_max-x_min)*$1/x_pts+x_min):\
     ((y_max-y_min)*$2/y_pts+y_min):3 w pm3d

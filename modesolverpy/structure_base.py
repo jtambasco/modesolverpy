@@ -15,6 +15,24 @@ except:
     import matplotlib.pylab as plt
     MPL = True
 
+def use_gnuplot():
+    """
+    Use gnuplot as the plotting tool for any structure related outputs.
+    """
+    global gp
+    import gnuplotpy as gp
+    global MPL
+    MPL = False
+
+def use_matplotlib():
+    """
+    Use matplotlib as the plotting tool for any structure related outputs.
+    """
+    global plt
+    import matplotlib.pylab as plt
+    global MPL
+    MPL = True
+
 class _AbstractStructure(with_metaclass(abc.ABCMeta)):
     @abc.abstractproperty
     def n(self):
