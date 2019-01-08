@@ -15,14 +15,19 @@ film_thickness = 0.22
 
 n_sub = mat.SiO2().n(wl)
 n_clad = mat.Air().n(wl)
-n_wg = 3.476
+n_wg = mat.RefractiveIndexWeb(
+    'https://refractiveindex.info/?shelf=main&book=Si&page=Li-293K').n(wl)
 
 r = []
 for w in wg_widths:
-    r.append(st.RidgeWaveguide(wl, x_step, y_step, etch_depth, w,
-                               sub_height, sub_width, clad_height,
-                               n_sub, n_wg, None, n_clad, film_thickness))
+    r.append(
+        st.RidgeWaveguide(wl, x_step, y_step, etch_depth, w, sub_height,
+                          sub_width, clad_height, n_sub, n_wg, None, n_clad,
+                          film_thickness))
+
+r[0].write_to_file('start_n_profile.dat')
+r[-1].write_to_file('end_n_profile.dat')
 
 solver = ms.ModeSolverFullyVectorial(6)
-solver.solve_sweep_structure(r, wg_widths, x_label='Taper width [um]')
+solver.solve_sweep_structure(r, wg_widths, x_label='Taper width', fraction_mode_list=[1,2])
 solver.write_modes_to_file()
