@@ -335,7 +335,7 @@ class _ModeSolver(with_metaclass(abc.ABCMeta)):
             plt.clf()
             plt.title(title)
             plt.xlabel(args["xlab"])
-            plt.ylabel(args["ylab"] + "$")
+            plt.ylabel(args["ylab"])
             for i in range(args["num_modes"]):
                 plt.plot(data[0], data[i + 1], "-o")
             plt.savefig(args["filename_image"])
