@@ -348,7 +348,7 @@ class Slabs(_AbstractStructure):
         self.slab_count = 0
         self._next_start = 0.
 
-    def add_slab(self, height, n_background=1.):
+    def add_slab(self, height, n_background=1., position='top'):
         '''
         Creates and adds a :class:`Slab` object.
 
@@ -360,6 +360,8 @@ class Slabs(_AbstractStructure):
         Returns:
             str: The name of the slab.
         '''
+        assert position in ('top', 'bottom')
+
         name = str(self.slab_count)
 
         if not callable(n_background):
@@ -377,6 +379,13 @@ class Slabs(_AbstractStructure):
         self.y_max = y_max
         self._next_start = y_min + height_discretised
         self.slab_count += 1
+
+        if position == 'bottom':
+            slabs = {}
+            for k in self.slabs.keys():
+                slabs[str(int(k)+1)] = self.slabs[k]
+            slabs['0'] = slabs.pop(str(self.slab_count))
+            self.slabs = slabs
 
         return name
 
