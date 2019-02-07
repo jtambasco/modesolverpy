@@ -3,12 +3,20 @@ set dataf sep ','
 set term pngcairo size 30cm,20cm
 set out filename_image
 
-set key below
+unset key
 set grid
 set border lw 1.5
+
+set pal def ( 0 'red', 100 'blue')
+set cbrange [0:100]
+set cblabel 'TE Fraction [%]'
+
+set yrange [1:*]
 
 set xlabel xlab
 set ylabel ylab
 set title titl font ',14'
 
-plot for [col=2:num_modes+1] filename_data u 1:col w lp lw 2 pt 7 title sprintf('Mode %i', col-2)
+N = num_modes + 1
+cmd = '< paste ' . filename_data . ' ' . filename_frac_te
+plot for [col=2:N] cmd u 1:col:(column(N+col-1)*100) w lp lw 2 pt 7 palette z title sprintf('Mode %i', col-2)

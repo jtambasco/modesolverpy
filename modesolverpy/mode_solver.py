@@ -168,7 +168,7 @@ class _ModeSolver(with_metaclass(abc.ABCMeta)):
                     title = "n_{effs} vs %s" % x_label
                     y_label = "n_{eff}"
                 self._plot_n_effs(
-                    self._modes_directory + filename, x_label, y_label, title
+                    self._modes_directory + filename, self._modes_directory + "fraction_te.dat", x_label, y_label, title
                 )
 
                 title = "TE Fraction vs %s" % x_label
@@ -234,6 +234,7 @@ class _ModeSolver(with_metaclass(abc.ABCMeta)):
                     y_label = "n_{eff}"
                 self._plot_n_effs(
                     self._modes_directory + filename,
+                    self._modes_directory + "fraction_te.dat",
                     "Wavelength",
                     "n_{eff}",
                     title,
@@ -316,12 +317,13 @@ class _ModeSolver(with_metaclass(abc.ABCMeta)):
                 fs.write(e_str + "\n")
         return mode
 
-    def _plot_n_effs(self, filename_n_effs, xlabel, ylabel, title):
+    def _plot_n_effs(self, filename_n_effs, filename_te_fractions, xlabel, ylabel, title):
         args = {
             "titl": title,
             "xlab": xlabel,
             "ylab": ylabel,
             "filename_data": filename_n_effs,
+            "filename_frac_te": filename_te_fractions,
             "filename_image": None,
             "num_modes": len(self.modes),
         }
