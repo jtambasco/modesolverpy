@@ -11,7 +11,7 @@ set pal def (0 'green', 50 'red', 100 'blue')
 set cbrange [0:100]
 set cblabel 'TE Fraction [%]'
 
-set yrange [1:*]
+#set yrange [1:*]
 
 set xlabel xlab
 set ylabel ylab
