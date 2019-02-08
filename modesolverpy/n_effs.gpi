@@ -7,7 +7,7 @@ unset key
 set grid
 set border lw 1.5
 
-set pal def ( 0 'red', 100 'blue')
+set pal def (0 'green', 50 'red', 100 'blue')
 set cbrange [0:100]
 set cblabel 'TE Fraction [%]'
 
@@ -19,4 +19,5 @@ set title titl font ',14'
 
 N = num_modes + 1
 cmd = '< paste ' . filename_data . ' ' . filename_frac_te
-plot for [col=2:N] cmd u 1:col:(column(N+col-1)*100) w lp lw 2 pt 7 palette z title sprintf('Mode %i', col-2)
+plot for [col=2:N] cmd u 1:col w l lw 3 lc rgb 'gray80',\
+     for [col=2:N] cmd u 1:col:(column(N+col-1)*100) w p pt 7 palette z

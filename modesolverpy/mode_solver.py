@@ -301,6 +301,7 @@ class _ModeSolver(with_metaclass(abc.ABCMeta)):
 
     def _write_n_effs_to_file(self, n_effs, filename, x_vals=None):
         with open(filename, "w") as fs:
+            fs.write('# Sweep param, mode 1, mode 2, ...\n')
             for i, n_eff in enumerate(n_effs):
                 if x_vals is not None:
                     line_start = str(x_vals[i]) + ","
