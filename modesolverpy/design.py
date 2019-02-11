@@ -53,3 +53,8 @@ def grating_coupler_period(wavelength, n_eff, n_clad,
         / (beta - k0*n_inc*np.sin(np.radians(incidence_angle_deg)))
 
     return grating_period
+
+def loss(n, wavelength):
+    kappa = n.imag
+    alpha = 4.34*4*np.pi*np.abs(kappa)/wavelength # 4.34 = 10*np.log10(np.e) -> [dB/m] = 4.34 [/m]
+    return alpha # [db/um] if working in [um]
