@@ -1,14 +1,19 @@
 # modesolverpy
 Photonic mode solver with a nice interface and output.
-
-The documentation for this project can be found [here](http://modesolverpy.rtfd.io).
-
-## Features
 * semi-vectorial and fully vectorial options,
 * simple structure drawing,
 * automated data saving and plotting via Gnuplot,
 * some limited (at this stage) data processing (finding MFD of fundamental mode), and
-* easily extensible library.
+* easily extensible library
+
+The documentation for this project can be found [here](http://modesolverpy.rtfd.io).
+
+## Examples
+* [Ex1: Semi-vectorial mode solving of a ridge waveguide](#example-1-semi-vectorial-mode-solving-of-a-ridge-waveguide)
+* [Ex2: Fully vectorial mode solving of an anisotropic material waveguide](#example-2-fully-vectorial-mode-solving-of-anisotropic-material)
+* [Ex3: Grating-coupler period](#example-3-grating-coupler-period)
+* [Ex4: Mode Hybridisation In SOI](#example-4-mode-hybridisation-in-soi)
+* [Ex6: Directional Coupler 3dB Length In SOI](#example-5-directional-coupler-3db-length-in-soi)
 
 ## Example 1: Semi-vectorial mode solving of a ridge waveguide
 The following example finds the first two modes of a waveguide with the following, arbitrary, parameters:
@@ -69,7 +74,7 @@ mode_solver.write_modes_to_file('example_modes_1.dat')
 ### Modes
 <img src="./examples/modes_semi_vec_ex1/example_modes_1_Ey_0.png " width="400"> <img src="./examples/modes_semi_vec_ex1/example_modes_1_Ey_1.png " width="400">
 
-## Example 2: Fully vectorial mode solving of anisotropic material
+## Example 2: Fully vectorial mode solving  of an anisotropic material waveguide
 The following looks at a contrived ridge waveguide in Z-cut KTP.
 
 The simulation outputs:
