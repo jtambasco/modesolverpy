@@ -3,44 +3,7 @@ Photonic mode solver with a nice interface and output.
 
 The documentation for this project can be found [here](http://modesolverpy.rtfd.io).
 
-## Installation
-It is recommend to install `modesolverpy` either via:
-
-### Ubuntu/Mint/Debian:
-```bash
-pip3 install modesolverpy # or pip2 install modesolverpy
-apt install gnuplot
-```
-
-### Arch Linux:
-```bash
-yaourt -S python-modesolverpy
-```
-
-### Dependencies
-If installing using the [Arch Linux AUR package](https://aur.archlinux.org/packages/python-modesolverpy/) or `pip`, dependencies will be automatically downloaded and installed, if not, one should ensure the following dependencies are installed:
-
-Either Gnuplot or Matplotlib can be used for plotting; I am a Gnuplot user to the code was written with it in mind.  If both Gnuplot and Matplotlib are installed, the code will default to Gnuplot.
-
-* [setuptools](https://pypi.python.org/pypi/setuptools),
-* [numpy](http://www.numpy.org/),
-* [scipy](https://www.scipy.org/),
-* [tqdm](https://pypi.python.org/pypi/tqdm), and
-* [opticalmaterialspy](https://github.com/jtambasco/opticalmaterialspy).
-
-#### Plotting
-EITHER:
-
-* [Gnuplot](http://www.gnuplot.info/).
-* [gnuplotpy](https://github.com/jtambasco/gnuplotpy),
-
-OR:
-
-* [matplotlib](https://matplotlib.org/),
-
 ## Features
-The main reasons to consider this library include:
-
 * semi-vectorial and fully vectorial options,
 * simple structure drawing,
 * automated data saving and plotting via Gnuplot,
@@ -385,8 +348,40 @@ for wl in wls:
 <img src="./examples/dc-sweep-soi-3db-index-profile-200nm-gap.png" width="600">
 <img src="./examples/dc-sweep-soi-3db.png" width="600">
 
-## Contributions
-If you add functionality, please send me a pull request.
+## Installation
+It is recommend to install `modesolverpy` either via:
+
+### Ubuntu/Mint/Debian:
+```bash
+pip3 install modesolverpy # or pip2 install modesolverpy
+apt install gnuplot
+```
+
+### Arch Linux:
+```bash
+yaourt -S python-modesolverpy
+```
+
+### Dependencies
+If installing using the [Arch Linux AUR package](https://aur.archlinux.org/packages/python-modesolverpy/) or `pip`, dependencies will be automatically downloaded and installed, if not, one should ensure the following dependencies are installed:
+
+Either Gnuplot or Matplotlib can be used for plotting; I am a Gnuplot user to the code was written with it in mind.  If both Gnuplot and Matplotlib are installed, the code will default to Gnuplot.
+
+* [setuptools](https://pypi.python.org/pypi/setuptools),
+* [numpy](http://www.numpy.org/),
+* [scipy](https://www.scipy.org/),
+* [tqdm](https://pypi.python.org/pypi/tqdm), and
+* [opticalmaterialspy](https://github.com/jtambasco/opticalmaterialspy).
+
+#### Plotting
+EITHER:
+
+* [Gnuplot](http://www.gnuplot.info/).
+* [gnuplotpy](https://github.com/jtambasco/gnuplotpy),
+
+OR:
+
+* [matplotlib](https://matplotlib.org/),
 
 ## Acknowledgments
 This finite difference mode solver is based on a modified version of [EMpy](https://github.com/lbolla/EMpy).
