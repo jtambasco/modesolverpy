@@ -331,9 +331,8 @@ solver.solve_sweep_structure(r, wg_widths, x_label='Taper width', fraction_mode_
 solver.write_modes_to_file()
 ```
 
-<img src="./examples/width-sweep/width-sweep-start-n-profile.png" width="400"> <img src="./examples/width-sweep/width-sweep-end-n-profile.png" width="400">
-<img src="./examples/width-sweep/width-sweep-soi.png " width="600">
-<img src="./examples/width-sweep/width-sweep-fraction-te.png " width="400"> <img src="./examples/width-sweep/width-sweep-fraction-tm.png " width="400">
+<img src="./examples/width-sweep/width-sweep-start-n-profile.png" width="300"> <img src="./examples/width-sweep/width-sweep-end-n-profile.png" width="300">
+<img src="./examples/width-sweep/width-sweep-soi.png" width="600">
 
 ## Example 5: Directional Coupler 3dB Length In SOI
 Analytic calculation of 3dB coupling length into two parallel SOI waveguides
