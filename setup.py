@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name='modesolverpy',
-      version='0.4.4',
+      version='0.4.5',
       description='Photonic mode solver.',
       url='https://github.com/jtambasco/modesolverpy',
       author='Jean-Luc Tambasco',

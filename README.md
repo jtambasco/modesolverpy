@@ -13,7 +13,7 @@ The documentation for this project can be found [here](http://modesolverpy.rtfd.
 * [Ex2: Fully vectorial mode solving of an anisotropic material waveguide](#example-2-fully-vectorial-mode-solving-of-anisotropic-material)
 * [Ex3: Grating-coupler period](#example-3-grating-coupler-period)
 * [Ex4: Mode Hybridisation In SOI](#example-4-mode-hybridisation-in-soi)
-* [Ex6: Directional Coupler 3dB Length In SOI](#example-5-directional-coupler-3db-length-in-soi)
+* [Ex5: Directional Coupler 3dB Length In SOI](#example-5-directional-coupler-3db-length-in-soi)
 
 ## Example 1: Semi-vectorial mode solving of a ridge waveguide
 The following example finds the first two modes of a waveguide with the following, arbitrary, parameters:
