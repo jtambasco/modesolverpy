@@ -65,7 +65,8 @@ class RidgeWaveguide(sb.Slabs):
 
         self.add_slab(sub_height, n_sub)
         if film_thickness != 'wg_height' and film_thickness != wg_height:
-            assert film_thickness > 0.
+            assert film_thickness > 0., 'Film must have some thickness to it.'
+            assert wg_height <= film_thickness, 'Waveguide can\'t be thicker than the film.'
             self.add_slab(film_thickness-wg_height, n_wg)
         k = self.add_slab(wg_height, n_clad)
 
