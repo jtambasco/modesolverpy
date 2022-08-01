@@ -133,7 +133,7 @@ class _AbstractStructure(with_metaclass(abc.ABCMeta)):
         '''
         if None not in (self.x_min, self.x_max, self.x_step) and \
                 self.x_min != self.x_max:
-            x = np.arange(self.x_min, self.x_max+self.x_step-self.y_step*0.1, self.x_step)
+            x = np.arange(self.x_min, self.x_max+self.x_step-self.x_step*0.1, self.x_step)
         else:
             x = np.array([])
         return x
@@ -369,7 +369,7 @@ class Slabs(_AbstractStructure):
         else:
             n_back = n_background
 
-        height_discretised = self.y_step*((height // self.y_step) + 1)
+        height_discretised = self.y_step*(height // self.y_step)
 
         y_min = self._next_start
         y_max = y_min + height_discretised

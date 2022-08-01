@@ -317,6 +317,14 @@ class _ModeSolver(with_metaclass(abc.ABCMeta)):
                 e_str = ",".join([str(v) for v in e])
                 fs.write(e_str + "\n")
         return mode
+    
+    def _write_mode_to_file_details(self, mode, filename):
+        efieldarray = []
+        for e, y in zip(mode[::-1], self._structure.y[::-1]):
+            for a, x in zip(e, self._structure.x[::-1]):
+                efieldarray.append([x,y,a])
+        np.savetxt(filename, efieldarray, delimiter=',',fmt='%.4e%+.4ej, %.4e%+.4ej, %.4e%+.4ej')
+        return mode
 
     def _plot_n_effs(self, filename_n_effs, filename_te_fractions, xlabel, ylabel, title):
         args = {
@@ -545,7 +553,8 @@ class ModeSolverSemiVectorial(_ModeSolver):
 
         return r
 
-    def write_modes_to_file(self, filename="mode.dat", plot=True, analyse=True):
+    def write_modes_to_file(self, filename="mode.dat", plot=True, analyse=True,
+        details=False):
         """
         Writes the mode fields to a file and optionally plots them.
 
@@ -561,6 +570,8 @@ class ModeSolverSemiVectorial(_ModeSolver):
                 diameter (MFD) and marks it on the output, and it
                 marks with a cross the maximum E-field value.
                 Default is `True`.
+            details (bool): 'True' if you want to save the x, y values in
+                addition to the electric field amplitudes.
 
         Returns:
             dict: A dictionary containing the effective indices
@@ -606,6 +617,9 @@ class ModeSolverSemiVectorial(_ModeSolver):
                         self.n_effs[i],
                         wavelength=self._structure._wl,
                     )
+            if details:
+                self._write_mode_to_file_details( mode, filename)
+       
 
         return self.modes
 
@@ -731,6 +745,7 @@ class ModeSolverFullyVectorial(_ModeSolver):
         filename="mode.dat",
         plot=True,
         fields_to_write=("Ex", "Ey", "Ez", "Hx", "Hy", "Hz"),
+        details=False
     ):
         """
         Writes the mode fields to a file and optionally plots them.
@@ -747,6 +762,8 @@ class ModeSolverFullyVectorial(_ModeSolver):
                 defining what part of the mode should be saved and
                 plotted.  By default, all six components are written
                 and plotted.
+            details (bool): 'True' if you want to save the x, y values in
+                addition to the electric field amplitudes.
 
         Returns:
             dict: A dictionary containing the effective indices
@@ -795,5 +812,8 @@ class ModeSolverFullyVectorial(_ModeSolver):
                             area=area,
                             wavelength=self._structure._wl,
                         )
+                    if details:
+                        self._write_mode_to_file_details( mode, filename)
+       
 
         return self.modes
