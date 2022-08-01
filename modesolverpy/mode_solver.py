@@ -570,6 +570,8 @@ class ModeSolverSemiVectorial(_ModeSolver):
                 diameter (MFD) and marks it on the output, and it
                 marks with a cross the maximum E-field value.
                 Default is `True`.
+            details (bool): 'True' if you want to save the x, y values in
+                addition to the electric field amplitudes.
 
         Returns:
             dict: A dictionary containing the effective indices
@@ -760,6 +762,8 @@ class ModeSolverFullyVectorial(_ModeSolver):
                 defining what part of the mode should be saved and
                 plotted.  By default, all six components are written
                 and plotted.
+            details (bool): 'True' if you want to save the x, y values in
+                addition to the electric field amplitudes.
 
         Returns:
             dict: A dictionary containing the effective indices
